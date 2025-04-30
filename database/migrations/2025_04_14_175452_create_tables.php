@@ -11,131 +11,152 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('informasis', function (Blueprint $table) {
-            $table->id('idInformasi')->unique()->primary();
-            $table->string('judulInformasi');
-            $table->integer('idStaffMitra');
-            $table->string('isiInformasi');
-            $table->string('tanggalRilis');
-            $table->string('tag');
-            $table->string('gambarInformasi');
+        // Tabel staff mitra (harus dibuat pertama karena direferensikan banyak tabel)
+        Schema::create('staff_mitras', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama_staff');
+            $table->string('email')->unique();
+            $table->string('password');
             $table->timestamps();
             $table->softDeletes();
         });
 
-        Schema::create('staffPerusahaans', function (Blueprint $table) {
-            $table->id('idStaffPerusahaan')->unique()->primary();
-            $table->string('namaStaff');
-            $table->string('email');
-            $table->integer('idPerusahaan');
+        // Tabel services (membutuhkan staff_mitra)
+        Schema::create('services', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama_service');
+            $table->integer('durasi_service');
+            $table->integer('harga_service');
+            $table->string('deskripsi_service');
+            $table->foreignId('id_staff_mitra')->constrained('staff_mitras');
+            $table->timestamps();
+            $table->softDeletes();
         });
 
+        // Tabel perusahaan (membutuhkan services)
         Schema::create('perusahaans', function (Blueprint $table) {
-            $table->id('idPerusahaan')->unique()->primary();
-            $table->string('namaPerusahaan');
-            $table->string('kodePerusahaan');
-            $table->integer('idService');
-            $table->date('tanggalAktifService');
+            $table->id();
+            $table->string('nama_perusahaan');
+            $table->string('kode_perusahaan')->unique();
+            $table->foreignId('id_service')->constrained('services');
+            $table->date('tanggal_aktif_service');
             $table->string('alamat');
             $table->timestamps();
             $table->softDeletes();
         });
 
-        Schema::create('karyawanPerusahaans', function (Blueprint $table) {
-            $table->id('idKaryawan')->unique()->primary();
-            $table->integer('idPerusahaan');
-            $table->string('namaKaryawan');
+        // Tabel staff perusahaan (membutuhkan perusahaan)
+        Schema::create('staff_perusahaans', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama_staff');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->foreignId('id_perusahaan')->constrained('perusahaans');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        // Tabel bahan bakar (tidak ada ketergantungan)
+        Schema::create('bahan_bakars', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama_bahan_bakar');
+            $table->string('jenis_bahan_bakar');
+            $table->integer('emisi_karbon_permenit');
+            $table->integer('harga_bahan_bakar_per_liter');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        // Tabel karyawan perusahaan (membutuhkan perusahaan)
+        Schema::create('karyawan_perusahaans', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('id_perusahaan')->constrained('perusahaans');
+            $table->string('nama_karyawan');
             $table->string('jabatan');
-            $table->string('email');
-            $table->enum('jenisKelamin', ['L', 'P']);
-            $table->date('tanggalLahir');
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->enum('jenis_kelamin', ['L', 'P']);
+            $table->date('tanggal_lahir');
             $table->timestamps();
             $table->softDeletes();
         });
 
-        Schema::create('bahanBakars', function (Blueprint $table) {
-            $table->id('idBahanBakar')->unique()->primary();
-            $table->string('namaBahanBakar');
-            $table->string('jenisBahanBakar');
-            $table->integer('emisiKarbonPermenit');
-            $table->integer('hargaBahanBakarPerLiter');
-            $table->timestamps();
-            $table->softDeletes();
-        });
-
-        Schema::create('staffMitras', function (Blueprint $table) {
-            $table->id('idStaffMitra')->unique()->primary();
-            $table->string('namaStaff');
-            $table->string('email');
-            $table->timestamps();
-            $table->softDeletes();
-        });
-
-        Schema::create('hasilAnalisisEmisis', function (Blueprint $table) {
-            $table->id('idHasilAnalisis')->unique()->primary();
-            $table->integer('idPerusahaan');
-            $table->date('tanggalAnalisis');
-            $table->string('pesanAnalisis');
-            $table->date('tanggalAwal');
-            $table->date('tanggalAkhir');
-            $table->timestamps();
-            $table->softDeletes();
-        });
-
-        Schema::create('alamatRumahs', function (Blueprint $table) {
-            $table->id('idAlamat')->unique()->primary();
-            $table->integer('idKaryawan');
-            $table->string('alamatRumah');
-            $table->timestamps();
-            $table->softDeletes();
-        });
-
+        // Tabel transportasi (tidak ada ketergantungan)
         Schema::create('transportasis', function (Blueprint $table) {
-            $table->id('idTransportasi')->unique()->primary();
-            $table->string('namaTransportasi');
-            $table->string('jenisTransportasi');
+            $table->id();
+            $table->string('nama_transportasi');
+            $table->string('jenis_transportasi');
             $table->timestamps();
             $table->softDeletes();
         });
 
-        Schema::create('services', function (Blueprint $table) {
-            $table->id('idService')->unique()->primary();
-            $table->string('namaService');
-            $table->integer('durasiService');
-            $table->integer('hargaService');
-            $table->string('deskripsiService');
-            $table->integer('idStaffMitra');
+        // Tabel alamat rumah (membutuhkan karyawan)
+        Schema::create('alamat_rumahs', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('id_karyawan')->constrained('karyawan_perusahaans');
+            $table->string('alamat_rumah');
             $table->timestamps();
             $table->softDeletes();
         });
 
+        // Tabel informasi (membutuhkan staff mitra)
+        Schema::create('informasis', function (Blueprint $table) {
+            $table->id();
+            $table->string('judul_informasi');
+            $table->foreignId('id_staff_mitra')->constrained('staff_mitras');
+            $table->text('isi_informasi');
+            $table->date('tanggal_rilis');
+            $table->string('tag');
+            $table->string('gambar_informasi')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        // Tabel hasil analisis emisi (membutuhkan perusahaan)
+        Schema::create('hasil_analisis_emisis', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('id_perusahaan')->constrained('perusahaans');
+            $table->date('tanggal_analisis');
+            $table->text('pesan_analisis');
+            $table->date('tanggal_awal');
+            $table->date('tanggal_akhir');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        // Tabel perjalanan karyawan (membutuhkan banyak relasi)
+        Schema::create('perjalanan_karyawan_perusahaans', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('id_karyawan')->constrained('karyawan_perusahaans');
+            $table->foreignId('id_transportasi')->constrained('transportasis');
+            $table->foreignId('id_bahan_bakar')->constrained('bahan_bakars');
+            $table->foreignId('id_perusahaan')->constrained('perusahaans');
+            $table->foreignId('id_alamat')->constrained('alamat_rumahs');
+            $table->date('tanggal_perjalanan');
+            $table->integer('durasi_perjalanan');
+            $table->integer('total_emisi_karbon');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        // Tabel pivot perjalanan (many-to-many)
         Schema::create('perjalanans', function (Blueprint $table) {
-            $table->integer('idHasilAnalisis');
-            $table->integer('idPerjalanan');
-        });
-
-        Schema::create('perjalananKaryawans', function (Blueprint $table) {
-            $table->id('idPerjalanan')->unique()->primary();
-            $table->integer('idKaryawan');
-            $table->integer('idTransportasi');
-            $table->integer('idBahanBakar');
-            $table->integer('idPerusahaan');
-            $table->integer('idAlamat');
-            $table->date('tanggalPerjalanan');
-            $table->integer('durasiPerjalanan');
-            $table->integer('totalEmisiKarbon');
+            $table->foreignId('id_hasil_analisis')->constrained('hasil_analisis_emisis');
+            $table->foreignId('id_perjalanan')->constrained('perjalanan_karyawan_perusahaans');
+            $table->primary(['id_hasil_analisis', 'id_perjalanan']);
             $table->timestamps();
             $table->softDeletes();
         });
 
-        Schema::create('hasilKonsultasis', function (Blueprint $table) {
-            $table->id('idHasilKonsultasi')->unique()->primary();
-            $table->integer('idPerusahaan');
-            $table->integer('idStaffMitra');
-            $table->date('tanggalKonsultasi');
-            $table->string('isiKonsultasi');
-            $table->string('pesanKonsultasi');
-            $table->integer('idHasilAnalisis');
+        // Tabel hasil konsultasi (membutuhkan beberapa relasi)
+        Schema::create('hasil_konsultasis', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('id_perusahaan')->constrained('perusahaans');
+            $table->foreignId('id_staff_mitra')->constrained('staff_mitras');
+            $table->date('tanggal_konsultasi');
+            $table->text('isi_konsultasi');
+            $table->text('pesan_konsultasi');
+            $table->foreignId('id_hasil_analisis')->constrained('hasil_analisis_emisis');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -146,18 +167,19 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('informasis');
-        Schema::dropIfExists('staffPerusahaans');
-        Schema::dropIfExists('perusahaans');
-        Schema::dropIfExists('karyawanPerusahaans');
-        Schema::dropIfExists('bahanBakars');
-        Schema::dropIfExists('staffMitras');
-        Schema::dropIfExists('hasilAnalisisEmisis');
-        Schema::dropIfExists('alamatRumahs');
-        Schema::dropIfExists('transportasis');
-        Schema::dropIfExists('services');
+        // Urutan penghapusan harus kebalikan dari pembuatan
+        Schema::dropIfExists('hasil_konsultasis');
         Schema::dropIfExists('perjalanans');
-        Schema::dropIfExists('perjalananKaryawans');
-        Schema::dropIfExists('hasilKonsultasis');
+        Schema::dropIfExists('perjalanan_karyawan_perusahaans');
+        Schema::dropIfExists('hasil_analisis_emisis');
+        Schema::dropIfExists('informasis');
+        Schema::dropIfExists('alamat_rumahs');
+        Schema::dropIfExists('transportasis');
+        Schema::dropIfExists('karyawan_perusahaans');
+        Schema::dropIfExists('bahan_bakars');
+        Schema::dropIfExists('staff_perusahaans');
+        Schema::dropIfExists('perusahaans');
+        Schema::dropIfExists('services');
+        Schema::dropIfExists('staff_mitras');
     }
 };
