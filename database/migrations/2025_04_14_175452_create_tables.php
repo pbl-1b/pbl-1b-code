@@ -105,7 +105,6 @@ return new class extends Migration
             $table->string('judul_informasi');
             $table->foreignId('id_staff_mitra')->constrained('staff_mitras');
             $table->text('isi_informasi');
-            $table->date('tanggal_rilis');
             $table->string('tag');
             $table->string('gambar_informasi')->nullable();
             $table->timestamps();

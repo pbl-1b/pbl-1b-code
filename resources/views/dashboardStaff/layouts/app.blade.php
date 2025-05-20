@@ -93,47 +93,61 @@
         },
         
         @if (isset($data))
-        @if ($dataType == 'perjalanan')
+        @if ($dataType == 'perusahaan')
         tableData: [
             @foreach ($data as $index => $item)
             {
                 no: {{ $index + 1 }},
                 id: '{{ $item->id }}',
-                nama_karyawan: '{{ $item->karyawanPerusahaan->nama_karyawan }}',
-                transportasi: '{{ $item->transportasi->nama_transportasi }}',
-                bahan_bakar: '{{ $item->bahanBakar->nama_bahan_bakar }}',
-                alamat: '{{ $item->alamat->alamat_rumah }}',
-                tanggal_perjalanan: '{{ $item->tanggal_perjalanan }}',
-                durasi_perjalanan: '{{ $item->durasi_perjalanan }}',
-                total_emisi_karbon: '{{ $item->total_emisi_karbon }}',
+                nama_perusahaan: '{{ $item->nama_perusahaan }}',
+                nama_service: '{{ $item->service->nama_service }}',
+                tgl_aktif: '{{ $item->tanggal_aktif_service }}',
+                alamat: '{{ $item->alamat }}',
             }@if (!$loop->last),@endif
             @endforeach
         ],
         @endif
-        @if ($dataType == 'alamat')
+        @if ($dataType == 'service')
         tableData: [
             @foreach ($data as $index => $item)
             {
                 no: {{ $index + 1 }},
                 id: '{{ $item->id }}',
-                nama_karyawan: '{{ $item->karyawanPerusahaan->nama_karyawan }}',
-                alamat: '{{ $item->alamat_rumah }}',
+                nama_service: '{{ $item->nama_service }}',
+                durasi_service: '{{ $item->durasi_service }} Days',
+                harga_service: 'Rp. {{ $item->harga_service }}',
+                pembuat_service: '{{ $item->staffMitra->nama_staff }}',
             }@if (!$loop->last),@endif
             @endforeach
         ],
         @endif
-        @if ($dataType == 'karyawan')
+        @if ($dataType == 'bahanBakar')
         tableData: [
             @foreach ($data as $index => $item)
             {
                 no: {{ $index + 1 }},
                 id: '{{ $item->id }}',
-                nama_perusahaan: '{{ $item->perusahaan->nama_perusahaan }}',
-                nama_karyawan: '{{ $item->nama_karyawan }}',
-                jabatan: '{{ $item->jabatan }}',
-                email: '{{ $item->email }}',
-                jenis_kelamin: '{{ $item->jenis_kelamin }}',
-                tanggal_lahir: '{{ $item->tanggal_lahir }}',
+                nama_bahan_bakar: '{{ $item->nama_bahan_bakar }}',
+                jenis_bahan_bakar: '{{ $item->jenis_bahan_bakar }}',
+                emisi_karbon: '{{ $item->emisi_karbon_permenit }}',
+                harga_bahan_bakar: '{{ $item->harga_bahan_bakar_per_liter }}',
+                created_at: '{{ $item->created_at }}',
+                updated_at: '{{ $item->updated_at }}',
+            }@if (!$loop->last),@endif
+            @endforeach
+        ],
+        @endif
+        @if ($dataType == 'informasi')
+        tableData: [
+            @foreach ($data as $index => $item)
+            {
+                no: {{ $index + 1 }},
+                id: '{{ $item->id }}',
+                judul_informasi: '{{ $item->judul_informasi }}',
+                nama_staff: '{{ $item->staffMitra->nama_staff }}',
+                isi_informasi: '{{ $item->isi_informasi }}',
+                tag: '{{ $item->tag }}',
+                gambar_informasi: '{{ $item->gambar_informasi }}',
                 created_at: '{{ $item->created_at }}',
                 updated_at: '{{ $item->updated_at }}',
             }@if (!$loop->last),@endif

@@ -79,6 +79,17 @@ class DatabaseSeeder extends Seeder
             'tanggal_lahir' => '2023-01-01',
         ]);
 
+        KaryawanPerusahaan::create([
+            'id' => '2',
+            'id_perusahaan' => '1',
+            'nama_karyawan' => 'Karyawan Perusahaan 2',
+            'email' => 'karyawans@example',
+            'password' => bcrypt('karyawan'),
+            'jabatan' => 'Karyawan Perusahaan 2',
+            'jenis_kelamin' => 'L',
+            'tanggal_lahir' => '2023-01-01',
+        ]);
+
         Transportasi::create([
             'id' => '1',
             'nama_transportasi' => 'Transportasi 1',
@@ -91,12 +102,11 @@ class DatabaseSeeder extends Seeder
             'alamat_rumah' => 'Jl. Rumah 1',
         ]);
 
-        Informasi::created([
+        Informasi::create([
             'id' => '1',
             'judul_informasi' => 'Informasi 1',
             'id_staff_mitra' => '1',
             'isi_informasi' => 'Informasi 1',
-            'tanggal_rilis' => '2023-01-01',
             'tag' => 'Ekonomi, Kesehatan',
             'gambar_informasi' => 'gambar_informasi.jpg',
         ]);

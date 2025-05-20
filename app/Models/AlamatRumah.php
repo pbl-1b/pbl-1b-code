@@ -14,11 +14,11 @@ class AlamatRumah extends Model
 
     public function karyawanPerusahaan()
     {
-        return $this->BelongsTo(KaryawanPerusahaan::class, 'id_karyawan');
+        return $this->belongsTo(KaryawanPerusahaan::class, 'id_karyawan');
     }
 
     public function perjalananKaryawan()
     {
-        return $this->BelongsTo(PerjalananKaryawanPerusahaan::class, 'id_perjalanan');
+        return $this->belongsTo(PerjalananKaryawanPerusahaan::class, 'id_perjalanan');
     }
 }

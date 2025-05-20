@@ -14,11 +14,11 @@ class PerjalananKaryawanController extends Controller
     public function index()
     {
         $perjalanans = PerjalananKaryawanPerusahaan::latest()->paginate(5);
-
+        $dataType = 'perjalanan';
         // $perjalanans = PerjalananKaryawanPerusahaan::all();
 
         // return ($perjalanans);
-        return view('dashboardPerusahaan.layouts.perjalananKaryawanPerusahaan.view', ['data' => $perjalanans]);
+        return view('dashboardPerusahaan.layouts.perjalananKaryawanPerusahaan.view', ['data' => $perjalanans, 'dataType' => $dataType]);
     }
 
     public function add()
@@ -59,7 +59,11 @@ class PerjalananKaryawanController extends Controller
         return redirect('dashboard/perusahaan/perjalanan/add')->with('success', 'Data Successfully Added');
     }
 
-    public function delete() {}
+    public function delete($id)
+    {
+        PerjalananKaryawanPerusahaan::destroy($id);
+        return redirect('dashboard/perusahaan/perjalanan')->with('success', 'Data Successfully Deleted');
+    }
 
     public function edit($id)
     {
@@ -75,7 +79,7 @@ class PerjalananKaryawanController extends Controller
         return view('dashboardPerusahaan.layouts.perjalananKaryawanPerusahaan.edit', ['dataTransportasi' => $transportasis, 'dataBahanBakar' => $bahanbakars, 'dataAlamat' => $alamats, 'dataKaryawan' => $karyawans, 'oldData' => $oldData, 'id' => $id]);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, string $id)
     {
         $validatedData = $request->validate([
             'employee_name' => 'required',
@@ -88,7 +92,7 @@ class PerjalananKaryawanController extends Controller
 
         $bahanBakar = BahanBakar::find($request->fuel);
 
-        PerjalananKaryawanPerusahaan::where('id', $request->id)->update([
+        PerjalananKaryawanPerusahaan::where('id', $id)->update([
             'id_karyawan' => $request->employee_name,
             'id_transportasi' => $request->transportation,
             'id_bahan_bakar' => $request->fuel,
@@ -99,6 +103,6 @@ class PerjalananKaryawanController extends Controller
             'total_emisi_karbon' =>  $bahanBakar->emisi_karbon_permenit * $request->trip_duration,
         ]);
 
-        return redirect('dashboard/perusahaan/perjalanan/edit/' . $request->id . '')->with('success', 'Data Successfully Updated');
+        return redirect('dashboard/perusahaan/perjalanan/edit/' . $id . '')->with('success', 'Data Successfully Updated');
     }
 }
