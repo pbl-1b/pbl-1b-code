@@ -18,7 +18,7 @@
     }"
 >
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
-        <h2 class="text-xl font-semibold text-gray-800">Employee Address</h2>
+        <h2 class="text-xl font-semibold text-gray-800">Companys</h2>
         <div class="flex flex-wrap gap-2">
             {{-- <a href="{{ route('company.add') }}">
                 <button class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 border border-green-600">

@@ -16,4 +16,9 @@ class Perusahaan extends Model
     {
         return $this->belongsTo(Service::class, 'id_service');
     }
+
+    public function code()
+    {
+        return $this->belongsTo(Code::class, 'id_code');
+    }
 }

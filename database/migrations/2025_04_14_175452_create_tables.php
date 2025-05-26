@@ -11,12 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Tabel Code
+        Schema::create('codes', function (Blueprint $table) {
+            $table->id();
+            $table->string('code')->unique();
+            $table->string('code_type');
+            $table->string('status');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
         // Tabel staff mitra (harus dibuat pertama karena direferensikan banyak tabel)
         Schema::create('staff_mitras', function (Blueprint $table) {
             $table->id();
             $table->string('nama_staff');
             $table->string('email')->unique();
             $table->string('password');
+            $table->foreignId('id_code')->constrained('codes');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -52,6 +63,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->foreignId('id_perusahaan')->constrained('perusahaans');
+            $table->foreignId('id_code')->constrained('codes');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -180,5 +192,6 @@ return new class extends Migration
         Schema::dropIfExists('perusahaans');
         Schema::dropIfExists('services');
         Schema::dropIfExists('staff_mitras');
+        Schema::dropIfExists('codes');
     }
 };

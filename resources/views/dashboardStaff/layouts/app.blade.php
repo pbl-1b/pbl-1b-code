@@ -21,6 +21,7 @@
             },
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <style>
         [x-cloak] { display: none !important; }
         
@@ -279,15 +280,15 @@
     x-init="$watch('chartPeriod', () => drawChart()); $nextTick(() => drawChart())">
 
         <!-- Navbar -->
-        @include('partials.navbar')
+        @include('dashboardStaff.partials.navbar')
         
         <!-- Sidebar for mobile (overlay) -->
-        @include('partials.sidebarMobile')
+        @include('dashboardStaff.partials.sidebarMobile')
 
         <!-- Content area with sidebar -->
         <div class="flex pt-16 min-h-screen">
             <!-- Sidebar (desktop) -->
-            @include('dashboardPerusahaan.partials.sidebar')
+            @include('dashboardStaff.partials.sidebar')
 
             <!-- Main content -->
             <main 

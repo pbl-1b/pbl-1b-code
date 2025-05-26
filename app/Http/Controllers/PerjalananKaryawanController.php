@@ -33,7 +33,6 @@ class PerjalananKaryawanController extends Controller
 
     public function store(Request $request)
     {
-
         $validatedData = $request->validate([
             'employee_name' => 'required',
             'transportation' => 'required',
@@ -42,6 +41,16 @@ class PerjalananKaryawanController extends Controller
             'trip_date' => 'required',
             'trip_duration' => 'required',
         ]);
+
+        // Cek duplikat berdasarkan nama karyawan dan tanggal perjalanan
+        $existing = PerjalananKaryawanPerusahaan::where('id_karyawan', $request->employee_name)
+            ->where('tanggal_perjalanan', $request->trip_date)
+            ->first();
+
+        if ($existing) {
+            return redirect('dashboard/perusahaan/perjalanan/add')
+                ->with('failed', 'Data sudah ada (data duplikat)');
+        }
 
         $bahanBakar = BahanBakar::find($request->fuel);
 
@@ -53,17 +62,26 @@ class PerjalananKaryawanController extends Controller
             'id_alamat' => $request->address,
             'tanggal_perjalanan' => $request->trip_date,
             'durasi_perjalanan' => $request->trip_duration,
-            'total_emisi_karbon' =>  $bahanBakar->emisi_karbon_permenit * $request->trip_duration,
+            'total_emisi_karbon' => $bahanBakar->emisi_karbon_permenit * $request->trip_duration,
         ]);
 
         return redirect('dashboard/perusahaan/perjalanan/add')->with('success', 'Data Successfully Added');
     }
+
 
     public function delete($id)
     {
         PerjalananKaryawanPerusahaan::destroy($id);
         return redirect('dashboard/perusahaan/perjalanan')->with('success', 'Data Successfully Deleted');
     }
+
+    public function destroy($id)
+    {
+        PerjalananKaryawanPerusahaan::findOrFail($id)->delete();
+
+        return redirect()->back()->with('deleted', 'Data berhasil dihapus');
+    }
+
 
     public function edit($id)
     {

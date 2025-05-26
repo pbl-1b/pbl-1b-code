@@ -16,20 +16,21 @@
         selectedRow: {},
         confirmDelete: false,
     }"
+   
 >
+
+    @if (session('success'))
+    <div class="mb-4 p-4 rounded-md border border-green-300 bg-green-50 text-green-800 shadow-sm flex items-start gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-0.5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <span>{{ session('success') }}</span>
+    </div>
+    @endif
+
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
         <h2 class="text-xl font-semibold text-gray-800">Perjalanan Karyawan</h2>
         <div class="flex flex-wrap gap-2">
-            <a href="{{ route('perjalananKaryawanPerusahaan.add') }}">
-                <button 
-                    class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 border border-green-600"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Add Data
-                </button>
-            </a>
         </div>
     </div>
 

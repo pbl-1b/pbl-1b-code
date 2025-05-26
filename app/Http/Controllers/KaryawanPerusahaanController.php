@@ -17,33 +17,31 @@ class KaryawanPerusahaanController extends Controller
         return view('dashboardPerusahaan.layouts.karyawan.view', ['data' => $karyawans, 'dataType' => $dataType]);
     }
 
-    public function add()
-    {
-        return view('dashboardPerusahaan.layouts.karyawan.add');
-    }
+    // public function add()
+    // {
+    //     return view('dashboardPerusahaan.layouts.karyawan.add');
+    // }
 
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'service_name' => 'required',
-            'service_duration' => 'required',
-            'service_price' => 'required',
-            'service_description' => 'required',
-        ]);
+    // public function store(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'service_name' => 'required',
+    //         'service_duration' => 'required',
+    //         'service_price' => 'required',
+    //         'service_description' => 'required',
+    //     ]);
 
-        // Simpan data ke database
-        KaryawanPerusahaan::create([
-            'nama_service' => $request->service_name,
-            'durasi_service' => $request->service_duration,
-            'harga_service' => $request->service_price,
-            'deskripsi_service' => $request->service_description,
-            'id_staff_mitra' => 1
-        ]);
+    //     // Simpan data ke database
+    //     KaryawanPerusahaan::create([
+    //         'nama_service' => $request->service_name,
+    //         'durasi_service' => $request->service_duration,
+    //         'harga_service' => $request->service_price,
+    //         'deskripsi_service' => $request->service_description,
+    //         'id_staff_mitra' => 1
+    //     ]);
 
-        return redirect('dashboard/perusahaan/karyawan/add')->with('success', 'Data Successfully Added');
-    }
-
-
+    //     return redirect('dashboard/perusahaan/karyawan/add')->with('success', 'Data Successfully Added');
+    // }
 
     public function delete($id)
     {
@@ -64,16 +62,19 @@ class KaryawanPerusahaanController extends Controller
     public function update(Request $request, string $id)
     {
         $validatedData = $request->validate([
-            'fuel_name' => 'required',
-            'emission' => 'required',
-            'cost' => 'required',
+            'employee_name' => 'required',
+            'position' => 'required',
+            'email' => 'required',
+            'gender' => 'required',
+            'birth_date' => 'required',
         ]);
 
         KaryawanPerusahaan::where('id', $id)->update([
-            'nama_bahan_bakar' => $request->fuel_name,
-            'jenis_bahan_bakar' => '-',
-            'emisi_karbon_permenit' => $request->emission,
-            'harga_bahan_bakar_per_liter' => $request->cost,
+            'nama_karyawan' => $request->employee_name,
+            'jabatan' => $request->position,
+            'email' => $request->email,
+            'jenis_kelamin' => $request->gender,
+            'tanggal_lahir' => $request->birth_date,
         ]);
 
         return redirect('dashboard/perusahaan/karyawan/edit/' . $id . '')->with('success', 'Data Successfully Updated');

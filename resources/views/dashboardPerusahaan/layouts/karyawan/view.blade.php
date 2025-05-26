@@ -137,7 +137,7 @@
             <div class="flex justify-between items-center mt-6 pt-4 border-t">
                 <!-- Edit Button -->
                 <a 
-                    :href="'{{ url('/dashboard/staff/informasi/edit') }}/' + selectedRow.id"
+                    :href="'{{ url('/dashboard/perusahaan/karyawan/edit') }}/' + selectedRow.id"
                     class="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-white text-sm font-semibold rounded-md transition"
                 >
                     Edit
@@ -148,7 +148,7 @@
                     <!-- Confirm Prompt -->
                     <template x-if="confirmDelete">
                         <form 
-                            :action="'{{ url('/dashboard/staff/informasi') }}/' + selectedRow.id" 
+                            :action="'{{ url('/dashboard/perusahaan/karyawan') }}/' + selectedRow.id" 
                             method="POST" 
                             class="flex items-center gap-2"
                         >
