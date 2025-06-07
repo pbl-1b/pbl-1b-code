@@ -5,10 +5,10 @@
             <!-- Logo -->
             <div class="flex items-center">
                 <a href="{{ url('/') }}" class="flex items-center">
-                    <div class="h-8 w-8 rounded-md bg-[#39AA80] flex items-center justify-center mr-2">
-                        <span class="text-white font-bold">G</span>
+                    <div class="h-8 w-8 rounded-md flex items-center justify-center mr-2">
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-full h-full object-cover">
                     </div>
-                    <span class="font-bold text-xl text-gray-900">GreenTech</span>
+                    <span class="font-bold text-xl text-[#39AA80]">CompCarbon</span>
                 </a>
             </div>
 
@@ -20,7 +20,6 @@
                         ['name' => 'Home', 'href' => url('/')],
                         ['name' => 'Services', 'href' => url('/#services')],
                         ['name' => 'About', 'href' => url('/#about')],
-                        ['name' => 'Portfolio', 'href' => url('/#portfolio')],
                         ['name' => 'Contact', 'href' => url('/#contact')]
                     ];
                     @endphp

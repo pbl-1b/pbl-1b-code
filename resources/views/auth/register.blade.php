@@ -30,19 +30,27 @@
                     </div>
                 @endif
 
+                @if (request('success'))
+                    <div class="bg-green-50 text-green-500 p-3 rounded mb-4">
+                        <ul class="list-disc pl-5">
+                            <p>{{ request('success') }}</p>
+                        </ul>
+                    </div>
+                @endif
+
                 <form method="POST" action="{{ route('register') }}" class="space-y-4">
                     @csrf
 
                     <!-- Name -->
                     <div class="space-y-2">
                         <label for="name" class="block text-sm font-medium">Full Name</label>
-                        <input id="name" type="text" name="name" value="{{ old('name') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#39AA80] focus:border-[#39AA80]" placeholder="John Doe" required autofocus>
+                        <input id="name" type="text" name="name" value="{{ old('name') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#39AA80] focus:border-[#39AA80]" placeholder="Input your full name" required autofocus>
                     </div>
 
                     <!-- Email -->
                     <div class="space-y-2">
                         <label for="email" class="block text-sm font-medium">Email</label>
-                        <input id="email" type="email" name="email" value="{{ old('email') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#39AA80] focus:border-[#39AA80]" placeholder="name@example.com" required>
+                        <input id="email" type="email" name="email" value="{{ old('email') }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#39AA80] focus:border-[#39AA80]" placeholder="Input your email" required>
                     </div>
 
                     <!-- Code -->
@@ -54,13 +62,13 @@
                     <!-- Password -->
                     <div class="space-y-2">
                         <label for="password" class="block text-sm font-medium">Password</label>
-                        <input id="password" type="password" name="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#39AA80] focus:border-[#39AA80]" required>
+                        <input id="password" type="password" name="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#39AA80] focus:border-[#39AA80]" placeholder="Input your password" required>
                     </div>
 
                     <!-- Confirm Password -->
                     <div class="space-y-2">
                         <label for="password_confirmation" class="block text-sm font-medium">Confirm Password</label>
-                        <input id="password_confirmation" type="password" name="password_confirmation" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#39AA80] focus:border-[#39AA80]" required>
+                        <input id="password_confirmation" type="password" name="password_confirmation" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#39AA80] focus:border-[#39AA80]" placeholder="Confirm your password" required>
                     </div>
 
                     <!-- Submit -->

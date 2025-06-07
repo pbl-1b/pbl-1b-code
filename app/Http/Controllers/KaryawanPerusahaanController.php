@@ -9,6 +9,7 @@ class KaryawanPerusahaanController extends Controller
 {
     public function index()
     {
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         $karyawans = KaryawanPerusahaan::latest()->paginate(5);
         $dataType = 'karyawan';
         // $karyawans = PerjalananKaryawanPerusahaan::all();
@@ -45,13 +46,14 @@ class KaryawanPerusahaanController extends Controller
 
     public function delete($id)
     {
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         KaryawanPerusahaan::destroy($id);
         return redirect('dashboard/perusahaan/karyawan')->with('success', 'Data Successfully Deleted');
     }
 
     public function edit($id)
     {
-
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         $oldData = KaryawanPerusahaan::find($id);
 
         // return ($oldData);
@@ -61,6 +63,7 @@ class KaryawanPerusahaanController extends Controller
 
     public function update(Request $request, string $id)
     {
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         $validatedData = $request->validate([
             'employee_name' => 'required',
             'position' => 'required',
@@ -82,6 +85,7 @@ class KaryawanPerusahaanController extends Controller
 
     public function restore(string $id)
     {
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         KaryawanPerusahaan::withTrashed()->where('id', $id)->restore();
         return redirect('dashboard/perusahaan/service')->with('success', 'Data Successfully Restored');
     }

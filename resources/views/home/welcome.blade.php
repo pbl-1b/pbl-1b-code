@@ -11,12 +11,12 @@
 
     <div class="container mx-auto px-4 py-20 md:py-32 relative z-10">
         <div class="flex flex-col md:flex-row items-center">
-            <div class="md:w-1/2 mb-10 md:mb-0">
+            <div class="md:w-1/2 mb-10 md:mb-0 -mt-40 ml-10">
                 <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                    Transform Your Digital Experience
+                Optimize Your Business, Minimize Your Carbon Footprint
                 </h1>
                 <p class="text-xl mb-8 text-white/90 max-w-lg">
-                    We create innovative solutions that help businesses grow, engage customers, and achieve their goals.
+                We provide smart carbon emission analysis to help companies grow sustainably, meet compliance, and drive environmental impact
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <a href="{{ route('register') }}" class="inline-flex justify-center items-center px-6 py-3 bg-white text-[#39AA80] font-medium rounded-md hover:bg-white/90 transition-colors">
@@ -31,7 +31,7 @@
             <div class="md:w-1/2 flex justify-center">
                 <div class="relative w-full max-w-md aspect-square">
                     <div class="absolute inset-0 bg-white/10 rounded-full animate-pulse"></div>
-                    <img src="{{ asset('images/placeholder.jpg') }}" alt="Hero Image" class="relative z-10 drop-shadow-2xl">
+                    <img src="{{ asset('images/home_image.jpg') }}" alt="Hero Image" class="relative z-10 drop-shadow-2xl rounded-lg">
                 </div>
             </div>
         </div>
@@ -129,7 +129,7 @@
                     'description' => 'We leverage cutting-edge technologies to create innovative solutions that drive business growth.'
                 ],
                 [
-                    'image' => 'images/placeholder.jpg',
+                    'image' => 'images/home_image.jpg',
                     'title' => 'Expert Team',
                     'description' => 'Our team of experienced professionals is dedicated to delivering exceptional results for every project.'
                 ],
@@ -184,9 +184,6 @@
         <div class="flex flex-col sm:flex-row justify-center gap-4">
             <a href="{{ route('contact') }}" class="inline-flex justify-center items-center px-6 py-3 bg-white text-[#39AA80] font-medium rounded-md hover:bg-white/90 transition-colors">
                 Contact Us Today
-            </a>
-            <a href="{{ route('portfolio') }}" class="inline-flex justify-center items-center px-6 py-3 border border-white text-white font-medium rounded-md hover:bg-white/10 transition-colors">
-                View Our Portfolio
             </a>
         </div>
     </div>

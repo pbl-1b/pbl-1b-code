@@ -12,20 +12,23 @@
             @endphp
 
             @foreach ($menus as $menu)
+                @php
+                    $isActive = Route::is($menu['route']);
+                @endphp
                 <li>
                     <a href="{{ route($menu['route']) }}"
                         @class([
                             'flex items-center gap-3 px-3 py-2 rounded-md border shadow-sm transition-colors',
-                            'bg-green-100 text-green-700 border-green-200 shadow-blue-100' => Route::is($menu['route']),
-                            'hover:bg-green-50 text-gray-700 border-transparent' => !Route::is($menu['route']),
+                            'bg-[#39AA80] text-white border-[#39AA80] shadow-blue-100' => $isActive,
+                            'hover:bg-green-50 text-[#39AA80] border-transparent' => !$isActive,
                         ])
                     >
                         <svg xmlns="http://www.w3.org/2000/svg"
-                            class="transition-all text-gray-500"
-                            :class="isSidebarCollapsed ? 'h-7 w-7' : 'h-5 w-5'"
+                            class="transition-all"
+                            :class="(isSidebarCollapsed ? 'h-7 w-7' : 'h-5 w-5')"
                             fill="none"
                             viewBox="0 0 24 24"
-                            stroke="currentColor"
+                            stroke="{{ $isActive ? 'white' : '#39AA80' }}"
                             stroke-width="2"
                         >
                             <path stroke-linecap="round" stroke-linejoin="round" d="{{ $menu['icon'] }}" />
@@ -37,7 +40,6 @@
                     </a>
                 </li>
             @endforeach
-
         </ul>
     </nav>
 </aside>

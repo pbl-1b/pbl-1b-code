@@ -1,6 +1,6 @@
 @extends('dashboardPerusahaan.layouts.app')
 
-@section('title', 'Add Consultations Data')
+@section('title', 'Add Data Employees Address')
 
 @section('content')
 

@@ -13,6 +13,7 @@ class PerjalananKaryawanController extends Controller
 {
     public function index()
     {
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         $perjalanans = PerjalananKaryawanPerusahaan::latest()->paginate(5);
         $dataType = 'perjalanan';
         // $perjalanans = PerjalananKaryawanPerusahaan::all();
@@ -23,6 +24,7 @@ class PerjalananKaryawanController extends Controller
 
     public function add()
     {
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         $transportasis = Transportasi::all();
         $bahanbakars = BahanBakar::all();
         $alamats = AlamatRumah::all();
@@ -33,6 +35,7 @@ class PerjalananKaryawanController extends Controller
 
     public function store(Request $request)
     {
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         $validatedData = $request->validate([
             'employee_name' => 'required',
             'transportation' => 'required',
@@ -71,12 +74,14 @@ class PerjalananKaryawanController extends Controller
 
     public function delete($id)
     {
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         PerjalananKaryawanPerusahaan::destroy($id);
         return redirect('dashboard/perusahaan/perjalanan')->with('success', 'Data Successfully Deleted');
     }
 
     public function destroy($id)
     {
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         PerjalananKaryawanPerusahaan::findOrFail($id)->delete();
 
         return redirect()->back()->with('deleted', 'Data berhasil dihapus');
@@ -85,6 +90,7 @@ class PerjalananKaryawanController extends Controller
 
     public function edit($id)
     {
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         $transportasis = Transportasi::all();
         $bahanbakars = BahanBakar::all();
         $alamats = AlamatRumah::all();
@@ -99,6 +105,7 @@ class PerjalananKaryawanController extends Controller
 
     public function update(Request $request, string $id)
     {
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         $validatedData = $request->validate([
             'employee_name' => 'required',
             'transportation' => 'required',

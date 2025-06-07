@@ -13,10 +13,11 @@ use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CodeController;
+use App\Http\Controllers\HalamanKaryawananController;
 use App\Models\BahanBakar;
 use App\Models\Informasi;
 use App\Models\Service;
-use Illuminate\Container\Attributes\Auth;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -110,3 +111,17 @@ Route::post('dashboard/perusahaan/konsultasi', [KonsultasiController::class, 'st
 Route::put('dashboard/perusahaan/konsultasi/edit/{id}', [KonsultasiController::class, 'update'])->name('konsultasi.update');
 Route::delete('dashboard/perusahaan/konsultasi/{id}', [KonsultasiController::class, 'delete'])->name('konsultasi.delete');
 Route::get('dashboard/perusahaan/konsultasi/restore/{id}', [KonsultasiController::class, 'restore'])->name('konsultasi.restore');
+
+Route::get('dashboard/karyawan/konsultasi', [HalamanKaryawananController::class, 'index'])->name('halamanKaryawan.index');
+Route::get('dashboard/karyawan/halamanKaryawan/edit/{id}', [HalamanKaryawananController::class, 'edit'])->name('halamanKaryawan.edit');
+Route::get('dashboard/karyawan/halamanKaryawa/add', [HalamanKaryawananController::class, 'add'])->name('halamanKaryawa.add');
+Route::post('dashboard/karyawan/halamanKaryawa', [HalamanKaryawananController::class, 'store'])->name('halamanKaryawa.store');
+Route::put('dashboard/karyawan/halamanKaryawa/edit/{id}', [HalamanKaryawananController::class, 'update'])->name('halamanKaryawa.update');
+Route::delete('dashboard/karyawan/halamanKaryawa/{id}', [HalamanKaryawananController::class, 'delete'])->name('halamanKaryawa.delete');
+Route::get('dashboard/karyawan/halamanKaryawa/restore/{id}', [HalamanKaryawananController::class, 'restore'])->name('halamanKaryawa.restore');
+
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/session', function () {
+    return session()->all();
+});

@@ -1,6 +1,6 @@
 @extends('dashboardPerusahaan.layouts.app')
 
-@section('title', 'Company Employees Commute')
+@section('title', 'Consultations')
 
 @section('content')
 
@@ -29,7 +29,7 @@
     @endif
 
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
-        <h2 class="text-xl font-semibold text-gray-800">Perjalanan Karyawan</h2>
+        <h2 class="text-xl font-semibold text-gray-800">Consultations</h2>
         <div class="flex flex-wrap gap-2">
             <a href="{{ route('perjalananKaryawanPerusahaan.add') }}">
                 <button class="flex items-center gap-2 px-4 py-2 bg-[#39AA80] text-white rounded-md hover:bg-[#207e5b] border border-[#39AA80]">
