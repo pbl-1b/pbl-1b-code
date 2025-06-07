@@ -10,6 +10,7 @@ class PerusahaanController extends Controller
 {
     public function index()
     {
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         $perusahaans = Perusahaan::latest()->paginate(5);
         $dataType = 'perusahaan';
         // $perjalanans = PerjalananKaryawanPerusahaan::all();
@@ -20,12 +21,14 @@ class PerusahaanController extends Controller
 
     public function delete($id)
     {
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         Perusahaan::destroy($id);
         return redirect('dashboard/staff/perusahaan')->with('success', 'Data Successfully Deleted');
     }
 
     public function edit($id)
     {
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         $services = Service::all();
 
         $oldData = Perusahaan::find($id);
@@ -37,6 +40,7 @@ class PerusahaanController extends Controller
 
     public function update(Request $request, string $id)
     {
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         $validatedData = $request->validate([
             'company_name' => 'required',
             'service_name' => 'required',

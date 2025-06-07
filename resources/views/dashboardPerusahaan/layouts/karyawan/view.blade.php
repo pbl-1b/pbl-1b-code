@@ -19,14 +19,7 @@
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
         <h2 class="text-xl font-semibold text-gray-800">Employees</h2>
         <div class="flex flex-wrap gap-2">
-            <a href="{{ route('karyawan.add') }}">
-                <button class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 border border-green-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Add Data
-                </button>
-            </a>
+            
         </div>
     </div>
 
@@ -137,7 +130,7 @@
             <div class="flex justify-between items-center mt-6 pt-4 border-t">
                 <!-- Edit Button -->
                 <a 
-                    :href="'{{ url('/dashboard/staff/informasi/edit') }}/' + selectedRow.id"
+                    :href="'{{ url('/dashboard/perusahaan/karyawan/edit') }}/' + selectedRow.id"
                     class="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-white text-sm font-semibold rounded-md transition"
                 >
                     Edit
@@ -148,7 +141,7 @@
                     <!-- Confirm Prompt -->
                     <template x-if="confirmDelete">
                         <form 
-                            :action="'{{ url('/dashboard/staff/informasi') }}/' + selectedRow.id" 
+                            :action="'{{ url('/dashboard/perusahaan/karyawan') }}/' + selectedRow.id" 
                             method="POST" 
                             class="flex items-center gap-2"
                         >

@@ -265,10 +265,10 @@
     x-init="$watch('chartPeriod', () => drawChart()); $nextTick(() => drawChart())">
 
         <!-- Navbar -->
-        @include('partials.navbar')
+        @include('dashboardPerusahaan.partials.navbar')
         
         <!-- Sidebar for mobile (overlay) -->
-        @include('partials.sidebarMobile')
+        @include('dashboardPerusahaan.partials.sidebarMobile')
 
         <!-- Content area with sidebar -->
         <div class="flex pt-16 min-h-screen">

@@ -13,6 +13,7 @@ class PerjalananKaryawanController extends Controller
 {
     public function index()
     {
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         $perjalanans = PerjalananKaryawanPerusahaan::latest()->paginate(5);
         $dataType = 'perjalanan';
         // $perjalanans = PerjalananKaryawanPerusahaan::all();
@@ -23,6 +24,7 @@ class PerjalananKaryawanController extends Controller
 
     public function add()
     {
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         $transportasis = Transportasi::all();
         $bahanbakars = BahanBakar::all();
         $alamats = AlamatRumah::all();
@@ -33,7 +35,7 @@ class PerjalananKaryawanController extends Controller
 
     public function store(Request $request)
     {
-
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         $validatedData = $request->validate([
             'employee_name' => 'required',
             'transportation' => 'required',
@@ -42,6 +44,16 @@ class PerjalananKaryawanController extends Controller
             'trip_date' => 'required',
             'trip_duration' => 'required',
         ]);
+
+        // Cek duplikat berdasarkan nama karyawan dan tanggal perjalanan
+        $existing = PerjalananKaryawanPerusahaan::where('id_karyawan', $request->employee_name)
+            ->where('tanggal_perjalanan', $request->trip_date)
+            ->first();
+
+        if ($existing) {
+            return redirect('dashboard/perusahaan/perjalanan/add')
+                ->with('failed', 'Data sudah ada (data duplikat)');
+        }
 
         $bahanBakar = BahanBakar::find($request->fuel);
 
@@ -53,20 +65,32 @@ class PerjalananKaryawanController extends Controller
             'id_alamat' => $request->address,
             'tanggal_perjalanan' => $request->trip_date,
             'durasi_perjalanan' => $request->trip_duration,
-            'total_emisi_karbon' =>  $bahanBakar->emisi_karbon_permenit * $request->trip_duration,
+            'total_emisi_karbon' => $bahanBakar->emisi_karbon_permenit * $request->trip_duration,
         ]);
 
         return redirect('dashboard/perusahaan/perjalanan/add')->with('success', 'Data Successfully Added');
     }
 
+
     public function delete($id)
     {
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         PerjalananKaryawanPerusahaan::destroy($id);
         return redirect('dashboard/perusahaan/perjalanan')->with('success', 'Data Successfully Deleted');
     }
 
+    public function destroy($id)
+    {
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        PerjalananKaryawanPerusahaan::findOrFail($id)->delete();
+
+        return redirect()->back()->with('deleted', 'Data berhasil dihapus');
+    }
+
+
     public function edit($id)
     {
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         $transportasis = Transportasi::all();
         $bahanbakars = BahanBakar::all();
         $alamats = AlamatRumah::all();
@@ -81,6 +105,7 @@ class PerjalananKaryawanController extends Controller
 
     public function update(Request $request, string $id)
     {
+        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
         $validatedData = $request->validate([
             'employee_name' => 'required',
             'transportation' => 'required',

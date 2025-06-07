@@ -1,22 +1,43 @@
 <?php
 
 use App\Http\Controllers\AlamatRumahController;
+use App\Http\Controllers\AnalisisEmisiKarbonController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BahanBakarController;
 use App\Http\Controllers\InformasiController;
 use App\Http\Controllers\KaryawanPerusahaanController;
+use App\Http\Controllers\KonsultasiController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PerjalananKaryawanController;
 use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\CodeController;
+use App\Http\Controllers\HalamanKaryawananController;
 use App\Models\BahanBakar;
 use App\Models\Informasi;
 use App\Models\Service;
+use Illuminate\Support\Facades\Auth;
 
-Route::get('/', function () {
-    return view('source');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('/login', [AuthController::class, 'viewLogin'])->name('login.view');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::get('/register', [AuthController::class, 'viewRegister'])->name('register.view');
+Route::post('/register', [AuthController::class, 'register'])->name('register');
+
+
+Route::get('/services', [HomeController::class, 'services'])->name('services');
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/portfolio', [HomeController::class, 'portfolio'])->name('portfolio');
+Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+
+Route::redirect('/dashboard/staff', '/dashboard/staff/perusahaan')->name('dashboard.staff');
+Route::redirect('/dashboard/perusahaan', '/dashboard/perusahaan/karyawan')->name('dashboard.perusahaan');
 // Route::get('/dashboard/perjalanan', [PerjalananKaryawanController::class, 'index']);
+
+Route::post('/generate-code', [CodeController::class, 'generateCode'])->name('code.generate');
+
 
 // Perjalanan Karyawan Perusahaan
 Route::get('dashboard/perusahaan/perjalanan', [PerjalananKaryawanController::class, 'index'])->name('perjalananKaryawanPerusahaan.index');
@@ -74,3 +95,33 @@ Route::post('dashboard/perusahaan/karyawan', [KaryawanPerusahaanController::clas
 Route::put('dashboard/perusahaan/karyawan/edit/{id}', [KaryawanPerusahaanController::class, 'update'])->name('karyawan.update');
 Route::delete('dashboard/perusahaan/karyawan/{id}', [KaryawanPerusahaanController::class, 'delete'])->name('karyawan.delete');
 Route::get('dashboard/perusahaan/karyawan/restore/{id}', [KaryawanPerusahaanController::class, 'restore'])->name('karyawan.restore');
+
+Route::get('dashboard/perusahaan/analisis', [AnalisisEmisiKarbonController::class, 'index'])->name('analisis.index');
+Route::get('dashboard/perusahaan/analisis/edit/{id}', [AnalisisEmisiKarbonController::class, 'edit'])->name('analisis.edit');
+Route::get('dashboard/perusahaan/analisis/add', [AnalisisEmisiKarbonController::class, 'add'])->name('analisis.add');
+Route::post('dashboard/perusahaan/analisis', [AnalisisEmisiKarbonController::class, 'store'])->name('analisis.store');
+Route::put('dashboard/perusahaan/analisis/edit/{id}', [AnalisisEmisiKarbonController::class, 'update'])->name('analisis.update');
+Route::delete('dashboard/perusahaan/analisis/{id}', [AnalisisEmisiKarbonController::class, 'delete'])->name('analisis.delete');
+Route::get('dashboard/perusahaan/analisis/restore/{id}', [AnalisisEmisiKarbonController::class, 'restore'])->name('analisis.restore');
+
+Route::get('dashboard/perusahaan/konsultasi', [KonsultasiController::class, 'index'])->name('konsultasi.index');
+Route::get('dashboard/perusahaan/konsultasi/edit/{id}', [KonsultasiController::class, 'edit'])->name('konsultasi.edit');
+Route::get('dashboard/perusahaan/konsultasi/add', [KonsultasiController::class, 'add'])->name('konsultasi.add');
+Route::post('dashboard/perusahaan/konsultasi', [KonsultasiController::class, 'store'])->name('konsultasi.store');
+Route::put('dashboard/perusahaan/konsultasi/edit/{id}', [KonsultasiController::class, 'update'])->name('konsultasi.update');
+Route::delete('dashboard/perusahaan/konsultasi/{id}', [KonsultasiController::class, 'delete'])->name('konsultasi.delete');
+Route::get('dashboard/perusahaan/konsultasi/restore/{id}', [KonsultasiController::class, 'restore'])->name('konsultasi.restore');
+
+Route::get('dashboard/karyawan/konsultasi', [HalamanKaryawananController::class, 'index'])->name('halamanKaryawan.index');
+Route::get('dashboard/karyawan/halamanKaryawan/edit/{id}', [HalamanKaryawananController::class, 'edit'])->name('halamanKaryawan.edit');
+Route::get('dashboard/karyawan/halamanKaryawa/add', [HalamanKaryawananController::class, 'add'])->name('halamanKaryawa.add');
+Route::post('dashboard/karyawan/halamanKaryawa', [HalamanKaryawananController::class, 'store'])->name('halamanKaryawa.store');
+Route::put('dashboard/karyawan/halamanKaryawa/edit/{id}', [HalamanKaryawananController::class, 'update'])->name('halamanKaryawa.update');
+Route::delete('dashboard/karyawan/halamanKaryawa/{id}', [HalamanKaryawananController::class, 'delete'])->name('halamanKaryawa.delete');
+Route::get('dashboard/karyawan/halamanKaryawa/restore/{id}', [HalamanKaryawananController::class, 'restore'])->name('halamanKaryawa.restore');
+
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/session', function () {
+    return session()->all();
+});

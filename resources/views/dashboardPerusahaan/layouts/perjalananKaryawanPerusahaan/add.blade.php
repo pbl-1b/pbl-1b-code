@@ -1,6 +1,6 @@
 @extends('dashboardPerusahaan.layouts.app')
 
-@section('title', 'Add Data Employees Address')
+@section('title', 'Add Consultations Data')
 
 @section('content')
 
@@ -94,6 +94,15 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
             </svg>
             <span>{{ session('success') }}</span>
+        </div>
+    @endif
+
+    @if (session('failed'))
+        <div class="mb-4 p-4 rounded-md border border-red-300 bg-red-50 text-red-800 shadow-sm flex items-start gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mt-0.5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <span>{{ session('failed') }}</span>
         </div>
     @endif
 

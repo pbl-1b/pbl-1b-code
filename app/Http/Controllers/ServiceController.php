@@ -12,6 +12,7 @@ class ServiceController extends Controller
 {
     public function index()
     {
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         $services = Service::latest()->paginate(5);
         $dataType = 'service';
         // $services = PerjalananKaryawanPerusahaan::all();
@@ -22,11 +23,13 @@ class ServiceController extends Controller
 
     public function add()
     {
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         return view('dashboardStaff.layouts.service.add');
     }
 
     public function store(Request $request)
     {
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         $validatedData = $request->validate([
             'service_name' => 'required',
             'service_duration' => 'required',
@@ -58,16 +61,16 @@ class ServiceController extends Controller
         return redirect('dashboard/staff/service/add')->with('success', 'Data Successfully Added');
     }
 
-
-
     public function delete($id)
     {
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         Service::destroy($id);
         return redirect('dashboard/staff/service')->with('success', 'Data Successfully Deleted');
     }
 
     public function edit($id)
     {
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         $karyawans = KaryawanPerusahaan::all();
 
         $oldData = Service::find($id);
@@ -79,6 +82,7 @@ class ServiceController extends Controller
 
     public function update(Request $request, string $id)
     {
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         $validatedData = $request->validate([
             'service_name' => 'required',
             'service_duration' => 'required',
@@ -118,6 +122,7 @@ class ServiceController extends Controller
 
     public function restore(string $id)
     {
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         Service::withTrashed()->where('id', $id)->restore();
         return redirect('dashboard/perusahaan/service')->with('success', 'Data Successfully Restored');
     }

@@ -10,6 +10,7 @@ class InformasiController extends Controller
 {
     public function index()
     {
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         $informasis = Informasi::latest()->paginate(5);
         $dataType = 'informasi';
         // $informasis = Informasi::all();
@@ -20,11 +21,13 @@ class InformasiController extends Controller
 
     public function add()
     {
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         return view('dashboardStaff.layouts.informasi.add');
     }
 
     public function store(Request $request)
     {
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         $validatedData = $request->validate([
             'information_name' => 'required',
             'tag' => 'required',
@@ -58,13 +61,14 @@ class InformasiController extends Controller
 
     public function delete($id)
     {
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         Informasi::destroy($id);
         return redirect('dashboard/staff/informasi')->with('success', 'Data Successfully Deleted');
     }
 
     public function edit($id)
     {
-
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         $oldData = Informasi::find($id);
 
         // return ($oldData);
@@ -74,6 +78,7 @@ class InformasiController extends Controller
 
     public function update(Request $request, string $id)
     {
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         $validatedData = $request->validate([
             'information_name' => 'required',
             'tag' => 'required',
@@ -112,6 +117,7 @@ class InformasiController extends Controller
 
     public function restore(string $id)
     {
+        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
         Informasi::withTrashed()->where('id', $id)->restore();
         return redirect('dashboard/perusahaan/informasi')->with('success', 'Data Successfully Restored');
     }

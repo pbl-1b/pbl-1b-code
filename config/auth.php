@@ -40,6 +40,18 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'staff' => [
+            'driver' => 'session',
+            'provider' => 'staff',
+        ],
+        'staffPerusahaan' => [
+            'driver' => 'session',
+            'provider' => 'staffPerusahaan',
+        ],
+        'karyawanPerusahaan' => [
+            'driver' => 'session',
+            'provider' => 'karyawanPerusahaan',
+        ],
     ],
 
     /*
@@ -60,17 +72,19 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'staff' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => App\Models\StaffMitra::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'staffPerusahaan' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\StaffPerusahaan::class,
+        ],
+        'karyawanPerusahaan' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\KaryawanPerusahaan::class,
+        ],
     ],
-
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords

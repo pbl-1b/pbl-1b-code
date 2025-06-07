@@ -16,9 +16,11 @@ use App\Models\StaffMitra;
 use App\Models\staffPerusahaan;
 use App\Models\Transportasi;
 use App\Models\User;
+use App\Models\Code;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Symfony\Component\Mailer\Transport;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,11 +29,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        Code::create([
+            'id' => '1',
+            'code' => '1234567890',
+            'code_type' => 'staff_mitra',
+            'status' => 'aktif',
+        ]);
+
+        Code::create([
+            'id' => '2',
+            'code' => '12dakndoaiq',
+            'code_type' => 'staff_perusahaan',
+            'status' => 'aktif',
+        ]);
+
         StaffMitra::create([
             'id' => '1',
             'nama_staff' => 'admin',
-            'password' => bcrypt('admin'),
+            'password' => Hash::make('admin'),
             'email' => 'admin@example.com',
+            'id_code' => '1',
         ]);
 
         Service::create([
@@ -55,9 +72,10 @@ class DatabaseSeeder extends Seeder
         staffPerusahaan::create([
             'id' => '1',
             'nama_staff' => 'Staff Perusahaan 1',
-            'email' => 'staff@example',
-            'password' => bcrypt('staff'),
+            'email' => 'staff@example.com',
+            'password' => Hash::make('staff'),
             'id_perusahaan' => '1',
+            'id_code' => '2',
         ]);
 
         BahanBakar::create([
@@ -72,8 +90,8 @@ class DatabaseSeeder extends Seeder
             'id' => '1',
             'id_perusahaan' => '1',
             'nama_karyawan' => 'Karyawan Perusahaan 1',
-            'email' => 'karyawan@example',
-            'password' => bcrypt('karyawan'),
+            'email' => 'karyawan@example.com',
+            'password' => Hash::make('karyawan'),
             'jabatan' => 'Karyawan Perusahaan 1',
             'jenis_kelamin' => 'L',
             'tanggal_lahir' => '2023-01-01',
@@ -83,8 +101,8 @@ class DatabaseSeeder extends Seeder
             'id' => '2',
             'id_perusahaan' => '1',
             'nama_karyawan' => 'Karyawan Perusahaan 2',
-            'email' => 'karyawans@example',
-            'password' => bcrypt('karyawan'),
+            'email' => 'karyawans@example.com',
+            'password' => Hash::make('karyawan'),
             'jabatan' => 'Karyawan Perusahaan 2',
             'jenis_kelamin' => 'L',
             'tanggal_lahir' => '2023-01-01',
