@@ -13,13 +13,32 @@ use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CodeController;
+use App\Http\Controllers\MapController;
 use App\Http\Controllers\HalamanKaryawananController;
+use App\Http\Controllers\PaymentController;
 use App\Models\BahanBakar;
 use App\Models\Informasi;
 use App\Models\Service;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('/register/service', [paymentController::class, 'index'])->name('register.service');
+Route::post('/get-snap-token', [PaymentController::class, 'getSnapToken'])->name('getSnapToken');
+
+Route::post('/set-payment-success', function () {
+    session(['payment_success' => true]);
+    return response()->json(['status' => 'ok']);
+});
+
+Route::get('/register/service/success', [PaymentController::class, 'paymentSuccess'])->name('register.success');
+// Route::post('/midtrans/callback', [PaymentController::class, 'midtransCallback'])->name('midtrans.callback');
+Route::post('/insertcompany', [PaymentController::class, 'insertFromFrontend']);
+// routes/web.php (Laravel)
+Route::get('/check-status/{order_id}', [PaymentController::class, 'checkStatus']);
+
+
+Route::post('/store-location', [MapController::class, 'store'])->name('store.location');
 
 Route::get('/login', [AuthController::class, 'viewLogin'])->name('login.view');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
@@ -61,6 +80,7 @@ Route::get('dashboard/staff/perusahaan', [PerusahaanController::class, 'index'])
 Route::get('dashboard/staff/perusahaan/edit/{id}', [PerusahaanController::class, 'edit'])->name('perusahaan.edit');
 Route::put('dashboard/staff/perusahaan/edit/{id}', [PerusahaanController::class, 'update'])->name('perusahaan.update');
 Route::delete('dashboard/staff/perusahaan/{id}', [PerusahaanController::class, 'delete'])->name('perusahaan.delete');
+Route::get('dashboard/perusahaan/profile', [PerusahaanController::class, 'getCompanyProfile'])->name('perusahaan.profile');
 
 // Service
 Route::get('dashboard/staff/service', [ServiceController::class, 'index'])->name('service.index');
@@ -88,6 +108,16 @@ Route::put('dashboard/staff/informasi/edit/{id}', [InformasiController::class, '
 Route::delete('dashboard/staff/informasi/{id}', [InformasiController::class, 'delete'])->name('informasi.delete');
 Route::get('dashboard/staff/informasi/restore/{id}', [InformasiController::class, 'restore'])->name('informasi.restore');
 
+Route::get('dashboard/staff/konsultasi', [KonsultasiController::class, 'indexStaff'])->name('staff.konsultasi.index');
+Route::get('dashboard/staff/konsultasi/edit/{id}', [KonsultasiController::class, 'editStaff'])->name('staff.konsultasi.edit');
+Route::get('dashboard/staff/konsultasi/add', [KonsultasiController::class, 'addStaff'])->name('staff.konsultasi.add');
+Route::post('dashboard/staff/konsultasi/add', [KonsultasiController::class, 'uploadStaff'])->name('staff.konsultasi.upload');
+Route::post('dashboard/staff/konsultasi', [KonsultasiController::class, 'storeStaff'])->name('staff.konsultasi.store');
+Route::put('dashboard/staff/konsultasi/edit/{id}', [KonsultasiController::class, 'updateStaff'])->name('staff.konsultasi.update');
+Route::delete('dashboard/staff/konsultasi/{id}', [KonsultasiController::class, 'deleteStaff'])->name('staff.konsultasi.delete');
+Route::get('dashboard/staff/konsultasi/restore/{id}', [KonsultasiController::class, 'restoreStaff'])->name('staff.konsultasi.restore');
+Route::post('dashboard/staff/konsultasi/comments', [KonsultasiController::class, 'comments'])->name('staff.konsultasi.comments');
+
 Route::get('dashboard/perusahaan/karyawan', [KaryawanPerusahaanController::class, 'index'])->name('karyawan.index');
 Route::get('dashboard/perusahaan/karyawan/edit/{id}', [KaryawanPerusahaanController::class, 'edit'])->name('karyawan.edit');
 Route::get('dashboard/perusahaan/karyawan/add', [KaryawanPerusahaanController::class, 'add'])->name('karyawan.add');
@@ -98,27 +128,41 @@ Route::get('dashboard/perusahaan/karyawan/restore/{id}', [KaryawanPerusahaanCont
 
 Route::get('dashboard/perusahaan/analisis', [AnalisisEmisiKarbonController::class, 'index'])->name('analisis.index');
 Route::get('dashboard/perusahaan/analisis/edit/{id}', [AnalisisEmisiKarbonController::class, 'edit'])->name('analisis.edit');
-Route::get('dashboard/perusahaan/analisis/add', [AnalisisEmisiKarbonController::class, 'add'])->name('analisis.add');
-Route::post('dashboard/perusahaan/analisis', [AnalisisEmisiKarbonController::class, 'store'])->name('analisis.store');
 Route::put('dashboard/perusahaan/analisis/edit/{id}', [AnalisisEmisiKarbonController::class, 'update'])->name('analisis.update');
 Route::delete('dashboard/perusahaan/analisis/{id}', [AnalisisEmisiKarbonController::class, 'delete'])->name('analisis.delete');
 Route::get('dashboard/perusahaan/analisis/restore/{id}', [AnalisisEmisiKarbonController::class, 'restore'])->name('analisis.restore');
+Route::get('dashboard/perusahaan/analisis/tabelanalisis', [AnalisisEmisiKarbonController::class, 'viewAnalisis'])->name('analisis.viewAnalisis');
+Route::get('dashboard/perusahaan/analisis-pdf', [AnalisisEmisiKarbonController::class, 'prosesAnalisis'])->name('analisis.analisis');
+// Route::post('dashboard/perusahaan/analisis/pdf', [AnalisisEmisiKarbonController::class, 'exportPdf'])->name('analisis.pdf');
+
 
 Route::get('dashboard/perusahaan/konsultasi', [KonsultasiController::class, 'index'])->name('konsultasi.index');
 Route::get('dashboard/perusahaan/konsultasi/edit/{id}', [KonsultasiController::class, 'edit'])->name('konsultasi.edit');
 Route::get('dashboard/perusahaan/konsultasi/add', [KonsultasiController::class, 'add'])->name('konsultasi.add');
+Route::post('dashboard/perusahaan/konsultasi/add', [KonsultasiController::class, 'upload'])->name('konsultasi.upload');
 Route::post('dashboard/perusahaan/konsultasi', [KonsultasiController::class, 'store'])->name('konsultasi.store');
 Route::put('dashboard/perusahaan/konsultasi/edit/{id}', [KonsultasiController::class, 'update'])->name('konsultasi.update');
 Route::delete('dashboard/perusahaan/konsultasi/{id}', [KonsultasiController::class, 'delete'])->name('konsultasi.delete');
 Route::get('dashboard/perusahaan/konsultasi/restore/{id}', [KonsultasiController::class, 'restore'])->name('konsultasi.restore');
 
-Route::get('dashboard/karyawan/konsultasi', [HalamanKaryawananController::class, 'index'])->name('halamanKaryawan.index');
-Route::get('dashboard/karyawan/halamanKaryawan/edit/{id}', [HalamanKaryawananController::class, 'edit'])->name('halamanKaryawan.edit');
-Route::get('dashboard/karyawan/halamanKaryawa/add', [HalamanKaryawananController::class, 'add'])->name('halamanKaryawa.add');
-Route::post('dashboard/karyawan/halamanKaryawa', [HalamanKaryawananController::class, 'store'])->name('halamanKaryawa.store');
-Route::put('dashboard/karyawan/halamanKaryawa/edit/{id}', [HalamanKaryawananController::class, 'update'])->name('halamanKaryawa.update');
-Route::delete('dashboard/karyawan/halamanKaryawa/{id}', [HalamanKaryawananController::class, 'delete'])->name('halamanKaryawa.delete');
-Route::get('dashboard/karyawan/halamanKaryawa/restore/{id}', [HalamanKaryawananController::class, 'restore'])->name('halamanKaryawa.restore');
+Route::get('dashboard/karyawan/perjalanan', [PerjalananKaryawanController::class, 'indexKaryawan'])->name('karyawan.perjalanan.index');
+Route::get('dashboard/karyawan/perjalanan/edit/{id}', [PerjalananKaryawanController::class, 'editKaryawan'])->name('karyawan.perjalanan.edit');
+Route::get('dashboard/karyawan/perjalanan/add', [PerjalananKaryawanController::class, 'addKaryawan'])->name('karyawan.perjalanan.add');
+Route::post('dashboard/karyawan/perjalanan/add', [PerjalananKaryawanController::class, 'uploadKaryawan'])->name('karyawan.perjalanan.upload');
+Route::post('dashboard/karyawan/perjalanan', [PerjalananKaryawanController::class, 'storeKaryawan'])->name('karyawan.perjalanan.store');
+Route::put('dashboard/karyawan/perjalanan/edit/{id}', [PerjalananKaryawanController::class, 'updateKaryawan'])->name('karyawan.perjalanan.update');
+Route::delete('dashboard/karyawan/perjalanan/{id}', [PerjalananKaryawanController::class, 'deleteKaryawan'])->name('karyawan.perjalanan.delete');
+Route::get('dashboard/karyawan/perjalanan/restore/{id}', [PerjalananKaryawanController::class, 'restoreKaryawan'])->name('karyawan.perjalanan.restore');
+
+
+
+// Route::get('dashboard/karyawan/konsultasi', [HalamanKaryawananController::class, 'index'])->name('halamanKaryawan.index');
+// Route::get('dashboard/karyawan/halamanKaryawan/edit/{id}', [HalamanKaryawananController::class, 'edit'])->name('halamanKaryawan.edit');
+// Route::get('dashboard/karyawan/halamanKaryawa/add', [HalamanKaryawananController::class, 'add'])->name('halamanKaryawa.add');
+// Route::post('dashboard/karyawan/halamanKaryawa', [HalamanKaryawananController::class, 'store'])->name('halamanKaryawa.store');
+// Route::put('dashboard/karyawan/halamanKaryawa/edit/{id}', [HalamanKaryawananController::class, 'update'])->name('halamanKaryawa.update');
+// Route::delete('dashboard/karyawan/halamanKaryawa/{id}', [HalamanKaryawananController::class, 'delete'])->name('halamanKaryawa.delete');
+// Route::get('dashboard/karyawan/halamanKaryawa/restore/{id}', [HalamanKaryawananController::class, 'restore'])->name('halamanKaryawa.restore');
 
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 

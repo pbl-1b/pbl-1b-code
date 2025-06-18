@@ -11,15 +11,54 @@ use Illuminate\Http\Request;
 
 class PerjalananKaryawanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         if ($redirect = $this->checkifLoginForCompany()) return $redirect;
-        $perjalanans = PerjalananKaryawanPerusahaan::latest()->paginate(5);
-        $dataType = 'perjalanan';
-        // $perjalanans = PerjalananKaryawanPerusahaan::all();
 
-        // return ($perjalanans);
-        return view('dashboardPerusahaan.layouts.perjalananKaryawanPerusahaan.view', ['data' => $perjalanans, 'dataType' => $dataType]);
+        $query = PerjalananKaryawanPerusahaan::query();
+
+        // Filter nama_karyawan
+        if ($request->filled('nama_karyawan')) {
+            $query->whereHas('karyawanPerusahaan', function ($q) use ($request) {
+                $q->where('nama_karyawan', 'like', '%' . $request->nama_karyawan . '%');
+            });
+        }
+
+        // Filter nama_bahan_bakar
+        if ($request->filled('nama_bahan_bakar')) {
+            $query->whereHas('bahanBakar', function ($q) use ($request) {
+                $q->where('nama_bahan_bakar', 'like', '%' . $request->nama_bahan_bakar . '%');
+            });
+        }
+
+        // Filter nama_transportasi
+        if ($request->filled('nama_transportasi')) {
+            $query->whereHas('transportasi', function ($q) use ($request) {
+                $q->where('nama_transportasi', 'like', '%' . $request->nama_transportasi . '%');
+            });
+        }
+
+        // Filter tanggal_perjalanan
+        if ($request->filled('tanggal_perjalanan')) {
+            $query->whereDate('tanggal_perjalanan', $request->tanggal_perjalanan);
+        }
+
+        $query->orderBy('tanggal_perjalanan', 'desc');
+
+        $perjalanans = $query->paginate(5);
+
+        $karyawans = KaryawanPerusahaan::all();
+        $bahanbakars = BahanBakar::all();
+        $transportasis = Transportasi::all();
+
+        return view('dashboardPerusahaan.layouts.perjalananKaryawanPerusahaan.view', [
+            'dataKaryawan' => $karyawans,
+            'dataBahanBakar' => $bahanbakars,
+            'dataTransportasi' => $transportasis,
+            'data' => $perjalanans,
+            'dataType' => 'perjalanan',
+            'request' => $request
+        ]);
     }
 
     public function add()

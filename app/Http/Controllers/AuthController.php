@@ -27,13 +27,16 @@ class AuthController extends Controller
 
         $email = $request->email;
         $password = $request->password;
+        $remember = $request->has('remember');
 
         // Coba login sebagai StaffMitra
         $staffMitra = StaffMitra::where('email', $email)->first();
         if ($staffMitra && Hash::check($password, $staffMitra->password)) {
             session(['role' => 'staff']);
             session(['id' => $staffMitra->id]);
-            Auth::guard('staff')->login($staffMitra);
+            session(['name' => $staffMitra->nama_staff]);
+            session(['email' => $staffMitra->email]);
+            Auth::guard('staff')->login($staffMitra, $remember);
 
             return redirect()->route('dashboard.staff');
         }
@@ -43,7 +46,10 @@ class AuthController extends Controller
         if ($staffPerusahaan && Hash::check($password, $staffPerusahaan->password)) {
             session(['role' => 'perusahaan']);
             session(['id' => $staffPerusahaan->id]);
-            Auth::guard('staffPerusahaan')->login($staffPerusahaan);
+            session(['name' => $staffPerusahaan->nama_staff]);
+            session(['email' => $staffPerusahaan->email]);
+            session(['id_perusahaan' => $staffPerusahaan->id_perusahaan]);
+            Auth::guard('staffPerusahaan')->login($staffPerusahaan, $remember);
 
             return redirect()->route('dashboard.perusahaan');
         }
@@ -53,14 +59,14 @@ class AuthController extends Controller
         if ($karyawan && Hash::check($password, $karyawan->password)) {
             session(['role' => 'karyawan']);
             session(['id' => $karyawan->id]);
-            Auth::guard('karyawanPerusahaan')->login($karyawan);
+            session(['name' => $karyawan->nama_karyawan]);
+            session(['email' => $karyawan->email]);
+            Auth::guard('karyawanPerusahaan')->login($karyawan, $remember);
 
             return redirect()->route('karyawanperusahaan');
         }
 
-        return response()->json([
-            'message' => 'Email atau password salah.'
-        ], 401);
+        return redirect()->back()->withErrors(['email' => 'Email atau password salah']);
     }
 
     public function viewRegister()

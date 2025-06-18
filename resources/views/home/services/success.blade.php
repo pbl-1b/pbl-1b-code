@@ -1,122 +1,433 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmpCarbon - Service Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.clientKey') }}"></script>
 
-@section('content')
-    <!-- Success Message Section -->
-    <section class="py-20 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-                <div class="p-8 text-center">
-                    <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-green-600" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                    </div>
-                    
-                    <h1 class="text-3xl font-bold text-gray-900 mb-4">Payment Successful!</h1>
-                    <p class="text-lg text-gray-600 mb-8">
-                        Thank you for your payment. Your service booking has been confirmed.
-                    </p>
-                    
-                    <div class="bg-gray-50 rounded-lg p-6 mb-8 text-left">
-                        <h2 class="text-xl font-semibold mb-4">Payment Details</h2>
-                        <div class="space-y-3">
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Payment ID:</span>
-                                <span class="font-medium">{{ $payment->id ?? 'PAY-'.rand(100000, 999999) }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Booking Reference:</span>
-                                <span class="font-medium">{{ $payment->booking_id ?? 'BK-'.rand(10000, 99999) }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Amount Paid:</span>
-                                <span class="font-medium">${{ $payment->amount ?? '2,200.00' }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Payment Method:</span>
-                                <span class="font-medium">{{ $payment->method ?? 'Credit Card' }}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Date:</span>
-                                <span class="font-medium">{{ $payment->date ?? date('F d, Y') }}</span>
-                            </div>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'outfit': ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    },
+                    borderRadius: {
+                        'md': '0.375rem',
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        [x-cloak] { display: none !important; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        /* Shadow with blue tint */
+        .shadow-blue-100 {
+            box-shadow: 0 1px 3px 0 rgba(59, 130, 246, 0.1), 0 1px 2px 0 rgba(59, 130, 246, 0.06);
+        }
+        
+        .shadow-green-100 {
+            box-shadow: 0 1px 3px 0 rgba(34, 197, 94, 0.1), 0 1px 2px 0 rgba(34, 197, 94, 0.06);
+        }
+    </style>
+    
+</head>
+<body class="bg-gray-50 font-outfit">
+    <div x-data="{ 
+        selectedService: null,
+        email: '',
+        companyName: '',
+        latitude: '',
+        longitude: '',
+        showPassword: false,
+        showConfirmPassword: false,
+        errors: {},
+        
+        services: [
+            @foreach ($services as $service)
+            {
+                id: '{{ $service->id }}',
+                name: '{{ $service->nama_service }}',
+                price: '{{ $service->harga_service }}',
+                period: 'monthly',
+                description: '{{ $service->deskripsi_service }}',
+                features: ['Carbon footprint tracking', 'Basic reporting', 'Email support'],
+                recommended: false
+            },
+            @endforeach
+        ],
+        
+        selectService(serviceId) {
+            this.selectedService = serviceId;
+            if (this.errors.service) {
+                delete this.errors.service;
+            }
+        },
+        
+        validateForm() {
+            this.errors = {};
+            
+            if (!this.email) {
+                this.errors.email = 'Email is required';
+            } else if (!/\S+@\S+\.\S+/.test(this.email)) {
+                this.errors.email = 'Email is invalid';
+            }
+            
+            if (!this.selectedService) {
+                this.errors.service = 'Please select a service plan';
+            }
+            
+            return Object.keys(this.errors).length === 0;
+        },
+        
+        {{-- submitForm() {
+            if (this.validateForm()) {
+                const selectedPlan = this.services.find(s => s.id === this.selectedService);
+                alert(`Registration successful for ${selectedPlan.name}! Redirecting to payment...`);
+            }
+        }, --}}
+        
+        getSelectedService() {
+            return this.services.find(s => s.id === this.selectedService);
+        }
+    }">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-300 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <button class="mr-2 p-2 rounded-md text-gray-600 hover:bg-gray-100">
+                            <a href="{{ url('/') }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </a>
+                        </button>
+                        <div class="flex items-center">
+                            <a href="{{ url('/') }}" class="flex items-center">
+                                <div class="h-8 w-8 rounded-md flex items-center justify-center mr-2">
+                                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-full h-full object-cover">
+                                </div>
+                                <span class="font-bold text-xl text-[#39AA80]">ComCarbon</span>
+                            </a>
                         </div>
                     </div>
-                    
-                    <div class="bg-[#39AA80]/10 rounded-lg p-6 mb-8 text-left">
-                        <h2 class="text-xl font-semibold mb-4">What's Next?</h2>
-                        <ul class="space-y-3">
-                            <li class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#39AA80] mr-2 mt-0.5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                                <span>You will receive a confirmation email with your booking details shortly.</span>
-                            </li>
-                            <li class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#39AA80] mr-2 mt-0.5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                                <span>Our team will contact you within 24-48 hours to discuss your project in detail.</span>
-                            </li>
-                            <li class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#39AA80] mr-2 mt-0.5" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                                <span>We will schedule a kickoff meeting to begin the project planning process.</span>
-                            </li>
-                        </ul>
+                    <div>
+                        <h1 class="text-lg font-semibold text-gray-800">Service Registration</h1>
                     </div>
-                    
-                    <div class="flex flex-col sm:flex-row justify-center gap-4">
-                        <a href="{{ route('dashboard') }}" class="inline-flex justify-center items-center px-6 py-3 bg-[#39AA80] text-white font-medium rounded-md hover:bg-[#39AA80]/90 transition-colors">
-                            Go to Dashboard
-                        </a>
-                        <a href="{{ route('home') }}" class="inline-flex justify-center items-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50 transition-colors">
-                            Return to Home
-                        </a>
-                    </div>
+                    <div class="w-24"></div> <!-- Empty div for balance -->
                 </div>
             </div>
-        </div>
-    </section>
+        </header>
 
-    <!-- Related Services Section -->
-    <section class="py-16 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="max-w-6xl mx-auto">
-                <h2 class="text-3xl font-bold mb-8 text-center">You Might Also Be Interested In</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    @php
-                    $relatedServices = [
-                        [
-                            'icon' => '<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-[#39AA80]" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>',
-                            'title' => 'Digital Marketing',
-                            'description' => 'Boost your online presence with our comprehensive digital marketing services.',
-                            'link' => '#'
-                        ],
-                        [
-                            'icon' => '<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-[#39AA80]" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>',
-                            'title' => 'Maintenance Plans',
-                            'description' => 'Keep your digital assets running smoothly with our maintenance and support plans.',
-                            'link' => '#'
-                        ],
-                        [
-                            'icon' => '<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-[#39AA80]" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M12 12v9"></path><path d="m8 17 4 4 4-4"></path></svg>',
-                            'title' => 'Cloud Hosting',
-                            'description' => 'Reliable and scalable cloud hosting solutions for your applications and websites.',
-                            'link' => '#'
-                        ]
-                    ];
-                    @endphp
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Registration Form Section -->
+            <div class="bg-white rounded-md shadow-sm shadow-blue-100 border border-gray-300 p-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-6">Registration Details</h2>
 
-                    @foreach($relatedServices as $service)
-                    <div class="bg-gray-50 p-6 rounded-lg hover:shadow-md transition-shadow duration-300">
-                        <div class="mb-4 p-3 bg-[#39AA80]/10 inline-block rounded-lg">
-                            {!! $service['icon'] !!}
+                <form class="space-y-6" id="payment-form" method="post" action="{{ route('getSnapToken') }}">
+                    <!-- Email Input -->
+                    <div>
+                        <label for="companyName" class="block text-sm font-medium text-gray-700 mb-1">
+                            Company Name <span class="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="companyName"
+                            name="companyName"
+                            x-model="companyName"
+                            class="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                            :class="errors.companyName ? 'border-red-300' : 'border-gray-300'"
+                            placeholder="Your Company Name"
+                        />
+                        <div x-show="errors.companyName" class="mt-1 text-sm text-red-600" x-text="errors.companyName" x-cloak></div>
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+                            Email Address <span class="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            x-model="email"
+                            class="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                            :class="errors.email ? 'border-red-300' : 'border-gray-300'"
+                            placeholder="your.email@example.com"
+                        />
+                        <div x-show="errors.email" class="mt-1 text-sm text-red-600" x-text="errors.email" x-cloak></div>
+                    </div>
+
+                    <div onclick="openMapModal()" class="bg-blue-500 text-white px-4 py-2 rounded">
+                        Select Company Address
+                    </div>
+                    
+                    <input type="hidden" name="latitude" id="latitude">
+                    <input type="hidden" name="longitude" id="longitude">
+                    <input type="hidden" name="idService" id="idService" x-model="selectedService">
+
+                    <!-- Service Summary -->
+                    <div x-show="selectedService" class="bg-gray-50 p-4 rounded-md border border-gray-200" x-cloak>
+                        <h3 class="text-sm font-medium text-gray-700 mb-2">Selected Plan</h3>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="font-medium text-gray-900" x-text="getSelectedService()?.name"></p>
+                                <p class="text-sm text-gray-500" x-text="getSelectedService()?.description"></p>
+                            </div>
+                            <p class="font-bold text-gray-900">
+                                <span x-text="getSelectedService()?.price"></span>/<span x-text="getSelectedService()?.period"></span>
+                            </p>
                         </div>
-                        <h3 class="text-xl font-bold mb-3">{{ $service['title'] }}</h3>
-                        <p class="text-gray-600 mb-4">{{ $service['description'] }}</p>
-                        <a href="{{ $service['link'] }}" class="inline-flex items-center text-[#39AA80] font-medium hover:underline">
-                            Learn more
-                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-                        </a>
                     </div>
-                    @endforeach
-                </div>
+
+                    <!-- Payment Security Notice -->
+                    <div class="flex items-center gap-2 p-4 bg-blue-50 rounded-md border border-blue-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        <p class="text-sm text-blue-700">
+                            Your payment information is secure. We use industry-standard encryption to protect your data.
+                        </p>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="pt-4 border-t border-gray-200">
+                        <button
+                            type="submit"
+                            id="pay-button"
+                            class="w-full md:w-auto bg-[#39AA80] hover:bg-[#39AA80] text-white px-6 py-2 rounded-md border border-[#39AA80] shadow-sm shadow-blue-50 flex items-center justify-center gap-2 transition-colors"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                            </svg>
+                            <span>Proceed to Payment</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </button>
+                        <p class="mt-2 text-xs text-gray-500 flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Registration takes less than 2 minutes
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <div id="mapModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded shadow-lg w-[90%] h-[80%] relative">
+            <div class="p-4 font-bold border-b">Tentukan Lokasi</div>
+            <div id="map" class="w-full h-[80%]"></div>
+            <div class="p-4 flex justify-end gap-2 border-t">
+                <button onclick="closeMapModal()" class="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>
+                <button onclick="submitLocation()" class="bg-green-500 text-white px-4 py-2 rounded">OK</button>
             </div>
         </div>
-    </section>
-@endsection
+    </div>
+
+    <!-- Modal -->
+    <div id="status-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white w-full max-w-md rounded-xl shadow-xl p-6 relative">
+            <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-4">
+                <h3 class="text-xl font-semibold text-gray-900" id="modal-title">Status</h3>
+                <button id="modal-close" class="text-gray-500 hover:text-gray-700 text-2xl leading-none font-semibold">&times;</button>
+            </div>
+            <p class="text-sm text-gray-700" id="modal-message">Pesan akan muncul di sini.</p>
+            <div class="mt-5 text-right">
+                <button id="modal-ok" class="bg-[] hover:bg-green-600 text-white px-4 py-2 rounded-md transition">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        let map, marker;
+        let selectedLat, selectedLng;
+
+        function openMapModal() {
+            document.getElementById('mapModal').classList.remove('hidden');
+            setTimeout(initMap, 100); // Delay agar modal siap
+        }
+
+        function closeMapModal() {
+            document.getElementById('mapModal').classList.add('hidden');
+        }
+
+        function initMap() {
+            if (map) return; // Sudah pernah dibuka
+            map = L.map('map').setView([-0.9471, 100.4172], 13); // Titik awal (Padang)
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            map.on('click', function(e) {
+                selectedLat = e.latlng.lat;
+                selectedLng = e.latlng.lng;
+
+                if (marker) {
+                    marker.setLatLng(e.latlng);
+                } else {
+                    marker = L.marker(e.latlng).addTo(map);
+                }
+            });
+        }
+
+        function submitLocation() {
+            if (!selectedLat || !selectedLng) {
+                alert("Silakan pilih lokasi di peta terlebih dahulu.");
+                return;
+            }
+
+            document.getElementById('latitude').value = selectedLat;
+            document.getElementById('longitude').value = selectedLng;
+
+            closeMapModal();
+            // document.getElementById('locationForm').submit();
+        }
+    </script>
+
+    <script>
+        const payButton = document.getElementById('pay-button');
+        const form = document.getElementById('payment-form');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            let savedToken = localStorage.getItem('snap_token');
+
+            if (savedToken) {
+                launchSnap(savedToken);
+            } else {
+                let formData = new FormData(form);
+
+                fetch('{{ route('getSnapToken') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.token) {
+                        localStorage.setItem('snap_token', data.token);
+                        launchSnap(data.token);
+                    } else {
+                        alert("Gagal mendapatkan token pembayaran.");
+                        console.error(data);
+                    }
+                })
+                .catch(error => {
+                    alert("Kesalahan saat mengambil snap token.");
+                    console.error(error);
+                });
+            }
+        });
+
+        function launchSnap(token) {
+            snap.pay(token, {
+                onSuccess: function(result) {
+                    showModal("Pembayaran Berhasil", "Data perusahaan akan disimpan...");
+
+                    // Ambil data dari form
+                    let formData = new FormData(document.getElementById('payment-form'));
+                    formData.append('order_id', result.order_id); // Optional: kirim order_id dari Midtrans
+
+                    fetch('/insertcompany', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        },
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(response => {
+                        console.log(response);
+                        showModal("Pembayaran Berhasil", "Data Perusahaan Berhasil Disimpan");
+                        localStorage.removeItem('snap_token'); // Bersihkan token
+                        // Optional: redirect atau reset form
+                        // window.location.href = '/thanks';
+
+                        fetch('/set-payment-success', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            },
+                            body: JSON.stringify({ order_id: result.order_id }) // bisa disesuaikan
+                        }).then(() => {
+                            setTimeout(() => {
+                                window.location.href = "{{ route('register.success') }}";
+                            }, 5000);
+                        });
+                    })
+                    .catch(error => {
+                        showModal("Sukses", "Pembayaran Sukses Namun Data Perusahaan Gagal Disimpan.");
+                        console.error(error);
+                    });
+                },
+                onPending: function(result) {
+                    showModal("Pembayaran Tertunda", "Pembayaran Anda sedang diproses. Harap tunggu.");
+                },
+                onError: function(result) {
+                    showModal("Kesalahan Pembayaran", "Terjadi kesalahan saat memproses pembayaran.");
+                    console.log(result);
+                    localStorage.removeItem('snap_token');
+                },
+                onClose: function() {
+                    showModal("Dibatalkan", "Anda menutup popup pembayaran sebelum menyelesaikannya.");
+                }
+            });
+        }
+
+    </script>
+
+    <script>
+        function showModal(title, message) {
+            const modal = document.getElementById('status-modal');
+            const titleEl = document.getElementById('modal-title');
+            const messageEl = document.getElementById('modal-message');
+
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('status-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        // Attach event listeners
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('modal-close').addEventListener('click', closeModal);
+            document.getElementById('modal-ok').addEventListener('click', closeModal);
+        });
+    </script>
+
+</body>
+</html>

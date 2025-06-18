@@ -1,3 +1,4 @@
+
 <!-- Alpine.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
@@ -15,7 +16,7 @@
 
             <!-- Sidebar toggle (desktop) -->
             <button @click="isSidebarCollapsed = !isSidebarCollapsed" 
-                    class="hidden mr-2 p-2 rounded-md text-gray-600 hover:bg-[#2F7B63] md:flex transition-colors">
+                    class="hidden mr-2 p-2 rounded-md text-gray-600 hover:bg-gray-100 md:flex transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" 
                      class="h-5 w-5 transition-transform" 
                      :class="isSidebarCollapsed ? 'rotate-180' : ''"
@@ -50,14 +51,14 @@
             <div class="relative" x-data="{ isOpen: false }">
                 <button 
                     @click="isOpen = !isOpen"
-                    class="flex items-center gap-2 p-2 rounded-md hover:bg-[#2F7B63] transition-colors"
+                    class="flex items-center border-top gap-2 p-2 rounded-md hover:bg-gray-100 transition-colors"
                 >
+                    <span class="hidden md:inline font-medium text-sm">{{ session('name') }}</span>
                     <img 
                         src="{{ asset('images/profile.jpg') }}" 
                         alt="Profile Picture"
-                        class="h-8 w-8 rounded-full object-cover"
+                        class="h-8 w-8 rounded-md object-cover"
                     >
-                    <span class="hidden md:inline font-medium text-sm">John Doe</span>
                 </button>
 
                 <!-- Dropdown -->
@@ -69,24 +70,18 @@
                     x-cloak
                 >
                     <div class="px-4 py-2 border-b border-gray-100">
-                        <p class="text-sm font-medium">John Doe</p>
-                        <p class="text-xs text-gray-500">admin@example.com</p>
+                        <p class="text-sm font-medium">{{ session('name') }}</p>
+                        <p class="text-xs text-gray-500">{{ session('email') }}</p>
                     </div>
                     <div class="py-1">
-                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-[#2F7B63] rounded-sm transition-colors">
+                        {{-- <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                             <span>My Profile</span>
-                        </a>
-                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-[#2F7B63] rounded-sm transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.657 0 3-1.343 3-3S13.657 2 12 2s-3 1.343-3 3 1.343 3 3 3zM12 14c-4.418 0-8 1.79-8 4v2h16v-2c0-2.21-3.582-4-8-4z" />
-                            </svg>
-                            <span>Settings</span>
-                        </a>
+                        </a> --}}
                         <div class="border-t border-gray-100 my-1"></div>
-                        <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-[#2F7B63] rounded-sm transition-colors">
+                        <a href="{{ route('logout') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7" />
                             </svg>

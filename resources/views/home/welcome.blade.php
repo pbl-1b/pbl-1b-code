@@ -45,70 +45,72 @@
 </section>
 
 <!-- Services Section -->
-<section class="py-20 bg-white" id="services">
+<section class="py-20 bg-white relative z-10 -mt-32" id="services">
     <div class="container mx-auto px-4">
         <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl font-bold mb-4">Our Services</h2>
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Select a Service Plan</h2>
             <p class="text-gray-600 max-w-2xl mx-auto">
-                We offer a comprehensive range of services to help your business thrive in the digital landscape.
+                Choose the right plan for your business needs and scale with confidence.
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @php
-            $services = [
-                [
-                    'icon' => '<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-[#39AA80]" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>',
-                    'title' => 'Fast Performance',
-                    'description' => 'Optimize your digital presence with lightning-fast loading times and smooth user experiences.'
-                ],
-                [
-                    'icon' => '<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-[#39AA80]" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>',
-                    'title' => 'Secure Solutions',
-                    'description' => 'Protect your data and users with our enterprise-grade security implementations.'
-                ],
-                [
-                    'icon' => '<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-[#39AA80]" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>',
-                    'title' => 'Data Analytics',
-                    'description' => 'Gain valuable insights with our comprehensive data analysis and reporting tools.'
-                ],
-                [
-                    'icon' => '<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-[#39AA80]" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>',
-                    'title' => 'User Experience',
-                    'description' => 'Create memorable experiences that keep your customers coming back for more.'
-                ],
-                [
-                    'icon' => '<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-[#39AA80]" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>',
-                    'title' => 'Quality Assurance',
-                    'description' => 'Ensure your products meet the highest standards with our rigorous testing processes.'
-                ],
-                [
-                    'icon' => '<svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-[#39AA80]" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>',
-                    'title' => 'Continuous Support',
-                    'description' => 'Get ongoing assistance and maintenance to keep your systems running smoothly.'
-                ]
-            ];
-            @endphp
-
-            @foreach($services as $service)
-            <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 hover:border-[#39AA80]/30 group">
-                <div class="mb-4 p-3 bg-[#39AA80]/10 inline-block rounded-lg group-hover:bg-[#39AA80]/20 transition-colors duration-300">
-                    {!! $service['icon'] !!}
-                </div>
-                <h3 class="text-xl font-bold mb-3">{{ $service['title'] }}</h3>
-                <p class="text-gray-600">{{ $service['description'] }}</p>
-                <div class="mt-6">
-                    <a href="" class="inline-flex items-center text-[#39AA80] font-medium hover:underline">
-                        Learn more
-                        <!-- {{ route('services') }} -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-                    </a>
-                </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Basic Plan -->
+            <div class="border border-gray-200 rounded-xl p-8 shadow-sm hover:shadow-lg transition relative flex flex-col h-full">
+                <h3 class="text-xl font-bold mb-2 text-[#39AA80]">Basic Plan</h3>
+                <p class="text-gray-600 mb-4">Perfect for small businesses and startups.</p>
+                <div class="text-3xl font-bold text-[#39AA80] mb-6">$9.99 <span class="text-base font-normal text-gray-500">/ month</span></div>
+                <ul class="space-y-3 text-gray-700 mb-6">
+                    <li class="flex items-center"><span class="text-green-500 mr-2">✔</span> Carbon footprint tracking</li>
+                    <li class="flex items-center"><span class="text-green-500 mr-2">✔</span> Basic reporting</li>
+                    <li class="flex items-center"><span class="text-green-500 mr-2">✔</span> Email support</li>
+                </ul>
+                <a href="#" class="mt-auto block text-center bg-[#39AA80] text-white px-6 py-3 rounded-md hover:bg-[#2C8A68] transition font-medium">
+                    Choose Basic
+                </a>
             </div>
-            @endforeach
+
+            <!-- Professional Plan -->
+            <div class="border-2 border-[#39AA80] rounded-[.5rem] p-8 shadow-lg relative flex flex-col h-full">
+                <span class="absolute top-0 right-0 bg-[#39AA80] text-white text-xs px-3 py-1 rounded-bl-lg font-semibold">Recommended</span>
+                <h3 class="text-xl font-bold mb-2 text-[#39AA80]">Professional Plan</h3>
+                <p class="text-gray-600 mb-4">Advanced features for growing businesses.</p>
+                <div class="text-3xl font-bold text-[#39AA80] mb-6">$29.99 <span class="text-base font-normal text-gray-500">/ month</span></div>
+                <ul class="space-y-3 text-gray-700 mb-6">
+                    <li class="flex items-center"><span class="text-green-500 mr-2">✔</span> All Basic Plan features</li>
+                    <li class="flex items-center"><span class="text-green-500 mr-2">✔</span> Advanced analytics</li>
+                    <li class="flex items-center"><span class="text-green-500 mr-2">✔</span> Custom reporting</li>
+                    <li class="flex items-center"><span class="text-green-500 mr-2">✔</span> Priority support</li>
+                    <li class="flex items-center"><span class="text-green-500 mr-2">✔</span> Team collaboration</li>
+                </ul>
+                <a href="#" class="mt-auto block text-center bg-[#39AA80] text-white px-6 py-3 rounded-md hover:bg-[#2C8A68] transition font-medium">
+                    Choose Professional
+                </a>
+            </div>
+
+            <!-- Enterprise Plan -->
+            <div class="border border-gray-200 rounded-xl p-8 shadow-sm hover:shadow-lg transition relative flex flex-col h-full">
+                <h3 class="text-xl font-bold mb-2 text-[#39AA80]">Enterprise Plan</h3>
+                <p class="text-gray-600 mb-4">Complete solution for large organizations.</p>
+                <div class="text-3xl font-bold text-[#39AA80] mb-6">$99.99 <span class="text-base font-normal text-gray-500">/ month</span></div>
+                <ul class="space-y-3 text-gray-700 mb-6">
+                    <li class="flex items-center"><span class="text-green-500 mr-2">✔</span> All Professional Plan features</li>
+                    <li class="flex items-center"><span class="text-green-500 mr-2">✔</span> Dedicated account manager</li>
+                    <li class="flex items-center"><span class="text-green-500 mr-2">✔</span> API access</li>
+                    <li class="flex items-center"><span class="text-green-500 mr-2">✔</span> Custom integrations</li>
+                    <li class="flex items-center"><span class="text-green-500 mr-2">✔</span> Unlimited users</li>
+                    <li class="flex items-center"><span class="text-green-500 mr-2">✔</span> 24/7 support</li>
+                </ul>
+                <a href="#" class="mt-auto block text-center bg-[#39AA80] text-white px-6 py-3 rounded-md hover:bg-[#2C8A68] transition font-medium">
+                    Choose Enterprise
+                </a>
+            </div>
         </div>
     </div>
 </section>
+
+
+
 
 <!-- Information Section -->
 <section class="py-20 bg-gray-50" id="about">

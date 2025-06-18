@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->foreignId('id_code')->constrained('codes');
+            $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -49,9 +50,11 @@ return new class extends Migration
             $table->id();
             $table->string('nama_perusahaan');
             $table->string('kode_perusahaan')->unique();
+            $table->string('email_perusahaan')->unique();
             $table->foreignId('id_service')->constrained('services');
             $table->date('tanggal_aktif_service');
-            $table->string('alamat');
+            $table->string('latitude');
+            $table->string('longitude');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -64,6 +67,7 @@ return new class extends Migration
             $table->string('password');
             $table->foreignId('id_perusahaan')->constrained('perusahaans');
             $table->foreignId('id_code')->constrained('codes');
+            $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -89,6 +93,7 @@ return new class extends Migration
             $table->string('password');
             $table->enum('jenis_kelamin', ['L', 'P']);
             $table->date('tanggal_lahir');
+            $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -126,11 +131,10 @@ return new class extends Migration
         // Tabel hasil analisis emisi (membutuhkan perusahaan)
         Schema::create('hasil_analisis_emisis', function (Blueprint $table) {
             $table->id();
+            $table->text('nama_analisis');
             $table->foreignId('id_perusahaan')->constrained('perusahaans');
             $table->date('tanggal_analisis');
-            $table->text('pesan_analisis');
-            $table->date('tanggal_awal');
-            $table->date('tanggal_akhir');
+            $table->text('file_pdf');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -163,14 +167,35 @@ return new class extends Migration
         Schema::create('hasil_konsultasis', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_perusahaan')->constrained('perusahaans');
-            $table->foreignId('id_staff_mitra')->constrained('staff_mitras');
+            $table->text('nama_konsultasi');
             $table->date('tanggal_konsultasi');
             $table->text('isi_konsultasi');
-            $table->text('pesan_konsultasi');
+            $table->text('status_konsultasi');
             $table->foreignId('id_hasil_analisis')->constrained('hasil_analisis_emisis');
             $table->timestamps();
             $table->softDeletes();
         });
+
+        Schema::create('pesans', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('id_staff')->constrained('staff_mitras');
+            $table->foreignId('id_konsultasi')->constrained('hasil_konsultasis');
+            $table->text('judul_pesan');
+            $table->text('isi_pesan');
+            $table->text('file_pdf')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        // Schema::create('transactions', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->integer('user_id');
+        //     $table->integer('product_id');
+        //     $table->integer('price');
+        //     $table->enum('status', ['pending', 'success', 'failed']);
+        //     $table->string('snap_token')->nullable();
+        //     $table->timestamps();
+        // });
     }
 
     /**
@@ -179,6 +204,9 @@ return new class extends Migration
     public function down(): void
     {
         // Urutan penghapusan harus kebalikan dari pembuatan
+        // Schema::dropIfExists('pending_companies');
+        // Schema::dropIfExists('transactions');
+        Schema::dropIfExists('pesans');
         Schema::dropIfExists('hasil_konsultasis');
         Schema::dropIfExists('perjalanans');
         Schema::dropIfExists('perjalanan_karyawan_perusahaans');

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EmpCarbon - Dashboard</title>
+    <title>@yield('title')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -92,13 +92,89 @@
             return this.tableData.filter(row => this.statusFilter.includes(row.status));
         },
         
+        @if (isset($data))
+        @if ($dataType == 'perjalanan')
         tableData: [
-            { id: '#1234', name: 'John Smith', status: 'Completed', date: 'Today, 2:30 PM', amount: '$120.00' },
-            { id: '#1235', name: 'Sarah Johnson', status: 'Pending', date: 'Today, 10:15 AM', amount: '$75.50' },
-            { id: '#1236', name: 'Michael Brown', status: 'Processing', date: 'Yesterday', amount: '$54.25' },
-            { id: '#1237', name: 'Emily Davis', status: 'Completed', date: 'Sep 12, 2023', amount: '$98.75' },
-            { id: '#1238', name: 'David Wilson', status: 'Cancelled', date: 'Sep 10, 2023', amount: '$35.00' }
+            @foreach ($data as $index => $item)
+            {
+                no: {{ $index + 1 }},
+                id: '{{ $item->id }}',
+                nama_karyawan: '{{ $item->karyawanPerusahaan->nama_karyawan }}',
+                transportasi: '{{ $item->transportasi->nama_transportasi }}',
+                bahan_bakar: '{{ $item->bahanBakar->nama_bahan_bakar }}',
+                alamat: '{{ $item->alamat->alamat_rumah }}',
+                tanggal_perjalanan: '{{ $item->tanggal_perjalanan }}',
+                durasi_perjalanan: '{{ $item->durasi_perjalanan }}',
+                total_emisi_karbon: '{{ $item->total_emisi_karbon }}',
+            }@if (!$loop->last),@endif
+            @endforeach
         ],
+        @endif
+        @if ($dataType == 'alamat')
+        tableData: [
+            @foreach ($data as $index => $item)
+            {
+                no: {{ $index + 1 }},
+                id: '{{ $item->id }}',
+                nama_karyawan: '{{ $item->karyawanPerusahaan->nama_karyawan }}',
+                alamat: '{{ $item->alamat_rumah }}',
+            }@if (!$loop->last),@endif
+            @endforeach
+        ],
+        @endif
+        @if ($dataType == 'karyawan')
+        tableData: [
+            @foreach ($data as $index => $item)
+            {
+                no: {{ $index + 1 }},
+                id: '{{ $item->id }}',
+                nama_perusahaan: '{{ $item->perusahaan->nama_perusahaan }}',
+                nama_karyawan: '{{ $item->nama_karyawan }}',
+                jabatan: '{{ $item->jabatan }}',
+                email: '{{ $item->email }}',
+                jenis_kelamin: '{{ $item->jenis_kelamin }}',
+                tanggal_lahir: '{{ $item->tanggal_lahir }}',
+                created_at: '{{ $item->created_at }}',
+                updated_at: '{{ $item->updated_at }}',
+            }@if (!$loop->last),@endif
+            @endforeach
+        ],
+        @endif
+        @if ($dataType == 'konsultasi')
+        tableData: [
+            @foreach ($data as $index => $item)
+            {
+                no: {{ $index + 1 }},
+                id: '{{ $item->id }}',
+                nama_perusahaan: '{{ $item->perusahaan->nama_perusahaan }}',
+                tanggal_konsultasi: '{{ $item->tanggal_konsultasi }}',
+                isi_konsultasi: '{{ $item->isi_konsultasi }}',
+                id_hasil_analisis: '{{ $item->id_hasil_analisis }}',
+                nama_konsultasi: '{{ $item->nama_konsultasi }}',
+                nama_analisis: '{{ $item->hasilAnalisisEmisi->nama_analisis }}',
+                created_at: '{{ $item->created_at }}',
+                updated_at: '{{ $item->updated_at }}',
+            }@if (!$loop->last),@endif
+            @endforeach
+        ],
+        @endif
+        @if ($dataType == 'analisis')
+        tableData: [
+            @foreach ($data as $index => $item)
+            {
+                no: {{ $index + 1 }},
+                id: '{{ $item->id }}',
+                nama_perusahaan: '{{ $item->perusahaan->nama_perusahaan }}',
+                nama_analisis: '{{ $item->nama_analisis }}',
+                tanggal_analisis: '{{ $item->tanggal_analisis }}',
+                file_pdf: '{{ $item->file_pdf }}',
+                created_at: '{{ $item->created_at }}',
+                updated_at: '{{ $item->updated_at }}',
+            }@if (!$loop->last),@endif
+            @endforeach
+        ],
+        @endif
+        @endif
         
         // Chart data
         chartData: {
@@ -223,39 +299,26 @@
     x-init="$watch('chartPeriod', () => drawChart()); $nextTick(() => drawChart())">
 
         <!-- Navbar -->
-        @include('partials.navbar')
+        @include('dashboardPerusahaan.partials.navbar')
         
         <!-- Sidebar for mobile (overlay) -->
-        @include('partials.sidebarMobile')
+        @include('dashboardPerusahaan.partials.sidebarMobile')
 
         <!-- Content area with sidebar -->
         <div class="flex pt-16 min-h-screen">
             <!-- Sidebar (desktop) -->
-            @include('partials.sidebar')
+            @include('dashboardPerusahaan.partials.sidebar')
 
             <!-- Main content -->
             <main 
                 class="flex-1 p-6 transition-all duration-300" 
                 :class="isSidebarCollapsed ? 'md:ml-16' : 'md:ml-64'"
             >
-                {{-- Form --}}
-
                 <template x-if="!showAddForm">
                     <!-- Dashboard content -->
                     <div>
-                        <div class="mb-6">
-                            <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
-                            <p class="text-gray-500">Welcome back, John! Here's what's happening.</p>
-                        </div>
-
-                        <!-- Stats Cards -->
                         
-                        <!-- Chart Card -->
-                        
-                        <!-- Table -->
-                        @include('partials.table')
-
-                        <!-- Widgets -->
+                        @yield('content')
  
                     </div>
                 </template>

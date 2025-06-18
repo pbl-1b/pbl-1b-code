@@ -29,6 +29,4 @@ class CodeController extends Controller
 
         return response()->json(['staff_code' => $codeStr]);
     }
-
-
 }
