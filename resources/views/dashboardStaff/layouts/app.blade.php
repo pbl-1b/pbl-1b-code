@@ -155,6 +155,25 @@
             @endforeach
         ],
         @endif
+        @if ($dataType == 'konsultasi')
+        tableData: [
+            @foreach ($data as $index => $item)
+            {
+                no: {{ $index + 1 }},
+                id: '{{ $item->id }}',
+                nama_perusahaan: '{{ $item->perusahaan->nama_perusahaan }}',
+                tanggal_konsultasi: '{{ $item->tanggal_konsultasi }}',
+                isi_konsultasi: '{{ $item->isi_konsultasi }}',
+                id_hasil_analisis: '{{ $item->id_hasil_analisis }}',
+                nama_konsultasi: '{{ $item->nama_konsultasi }}',
+                status_konsultasi: '{{ $item->status_konsultasi }}',
+                nama_analisis: '{{ $item->hasilAnalisisEmisi->nama_analisis }}',
+                created_at: '{{ $item->created_at }}',
+                updated_at: '{{ $item->updated_at }}',
+            }@if (!$loop->last),@endif
+            @endforeach
+        ],
+        @endif
         @endif
         
         // Chart data

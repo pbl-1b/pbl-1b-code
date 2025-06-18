@@ -17,6 +17,7 @@ use App\Models\staffPerusahaan;
 use App\Models\Transportasi;
 use App\Models\User;
 use App\Models\Code;
+use App\Models\Pesan;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Symfony\Component\Mailer\Transport;
@@ -64,9 +65,11 @@ class DatabaseSeeder extends Seeder
             'id' => '1',
             'id_service' => '1',
             'nama_perusahaan' => 'Perusahaan 1',
+            'email_perusahaan' => 'perusahaan@example.com',
             'kode_perusahaan' => '1234567890',
             'tanggal_aktif_service' => '2023-01-01',
-            'alamat' => 'Jl. Perusahaan 1',
+            'latitude' => '0',
+            'longitude' => '0',
         ]);
 
         staffPerusahaan::create([
@@ -131,11 +134,10 @@ class DatabaseSeeder extends Seeder
 
         HasilAnalisisEmisi::create([
             'id' => '1',
+            'nama_analisis' => 'Hasil Analisis Emisi 1',
             'id_perusahaan' => '1',
             'tanggal_analisis' => '2023-01-01',
-            'pesan_analisis' => 'Hasil Analisis Emisi 1',
-            'tanggal_awal' => '2023-01-01',
-            'tanggal_akhir' => '2023-01-01',
+            'file_pdf' => 'text.pdf'
         ]);
 
         PerjalananKaryawanPerusahaan::create([
@@ -158,11 +160,20 @@ class DatabaseSeeder extends Seeder
         HasilKonsultasi::create([
             'id' => '1',
             'id_perusahaan' => '1',
-            'id_staff_mitra' => '1',
+            'nama_konsultasi' => 'Nama Konsultasi',
             'tanggal_konsultasi' => '2023-01-01',
             'isi_konsultasi' => 'Hasil Konsultasi 1',
-            'pesan_konsultasi' => 'Pesan Hasil Konsultasi 1',
+            'status_konsultasi' => 'OPEN',
             'id_hasil_analisis' => '1',
+        ]);
+
+        Pesan::Create([
+            'id' => '1',
+            'id_staff' => '1',
+            'id_konsultasi' => '1',
+            'judul_pesan' => 'Pesan 1',
+            'isi_pesan' => 'Pesan 1',
+            'file_pdf' => 'file.pdf',
         ]);
     }
 }

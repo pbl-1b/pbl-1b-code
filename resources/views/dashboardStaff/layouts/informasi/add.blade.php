@@ -30,7 +30,7 @@
                 @enderror
             </div>
 
-            <!-- Service Duration -->
+            <!-- Tag -->
             <div>
                 <label for="tag" class="block text-sm font-medium text-gray-700 mb-1">Tag<span class="text-red-500">*</span></label>
                 <input type="text" id="tag" name="tag" value="{{ old('tag') }}" required

@@ -31,12 +31,12 @@
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
         <h2 class="text-xl font-semibold text-gray-800">Consultations</h2>
         <div class="flex flex-wrap gap-2">
-            <a href="{{ route('perjalananKaryawanPerusahaan.add') }}">
+            <a href="{{ route('konsultasi.add') }}">
                 <button class="flex items-center gap-2 px-4 py-2 bg-[#39AA80] text-white rounded-md hover:bg-[#207e5b] border border-[#39AA80]">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    {{-- <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"> --}}
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
-                    Add Data
+                    Open Consultation
                 </button>
             </a>
         </div>
@@ -47,11 +47,9 @@
             <thead class="bg-gray-50">
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee Name</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trip Date</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trip Duration (Minutes)</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">TOTAL CARBON EMISSIONS (CO2e)</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Consultation Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Analysis Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Consulation Date</th>
                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                 </tr>
             </thead>
@@ -59,11 +57,9 @@
                 <template x-for="(row, index) in filteredData" :key="index">
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" x-text="row.no"></td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="row.nama_karyawan"></td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="row.alamat"></td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="row.tanggal_perjalanan"></td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="row.durasi_perjalanan"></td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="row.total_emisi_karbon"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="row.nama_konsultasi"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="row.nama_analisis"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="row.tanggal_konsultasi"></td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                             <div class="flex justify-center gap-2">
                                 <button 

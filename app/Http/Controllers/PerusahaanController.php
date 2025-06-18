@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Perusahaan;
 use App\Models\Service;
+use App\Models\StaffPerusahaan;
 use Illuminate\Http\Request;
 
 class PerusahaanController extends Controller

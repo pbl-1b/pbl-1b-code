@@ -17,11 +17,6 @@ class HasilKonsultasi extends Model
         return $this->belongsTo(Perusahaan::class, 'id_perusahaan');
     }
 
-    public function staffMitra()
-    {
-        return $this->belongsTo(StaffMitra::class, 'id_staff_mitra');
-    }
-
     public function hasilAnalisisEmisi()
     {
         return $this->belongsTo(HasilAnalisisEmisi::class, 'id_hasil_analisis');
