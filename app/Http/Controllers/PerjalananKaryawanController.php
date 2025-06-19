@@ -74,9 +74,12 @@ class PerjalananKaryawanController extends Controller
             'alamat_rumah' => 'required',
             'bahan_bakar' => 'required',
             'transportasi' => 'required',
+            'durasi_perjalanan' => 'required',
         ]);
 
         $idPerusahaan = KaryawanPerusahaan::where('id', session('id'))->first()->id_perusahaan;
+
+        $emisiKarbonPermenit = BahanBakar::where('id', $request->bahan_bakar)->first()->emisi_karbon_permenit;
 
         $alamatRumah = AlamatRumah::find($request->alamat_rumah);
         $perusahaan = Perusahaan::find($idPerusahaan);
@@ -95,7 +98,6 @@ class PerjalananKaryawanController extends Controller
             'lng' => (float) $perusahaan->longitude
         ];
 
-
         // $latitudePerusahan = Perusahaan::where('id', $idPerusahaan)->first()->latitude;
         // $longitudePerusahan = Perusahaan::where('id', $idPerusahaan)->first()->longitude;
 
@@ -104,13 +106,16 @@ class PerjalananKaryawanController extends Controller
 
         $jarakPerjalanan = $this->hitungJarakPerjalanan($start, $end);
 
-        $emisiKarbon = '';
+        dd($jarakPerjalanan);
+
+        $emisiKarbon = $jarakPerjalanan * $emisiKarbonPermenit * $request->durasi_perjalanan;
 
         PerjalananKaryawanPerusahaan::create([
             'id_karyawan' => session('id'),
             'id_transportasi' => $request->transportasi,
             'id_bahan_bakar' => $request->bahan_bakar,
-            'id_alamat' => $request->alamat,
+            'durasi_perjalanan' => $request->durasi_perjalanan,
+            'id_alamat' => $request->alamat_rumah,
             'id_perusahaan' => $idPerusahaan,
             'tanggal_perjalanan' => Carbon::now(),
             'jarak_perjalanan' => $jarakPerjalanan,
@@ -129,30 +134,29 @@ class PerjalananKaryawanController extends Controller
             [(float) $end['lng'], (float) $end['lat']],
         ];
 
+        $url = 'https://api.openrouteservice.org/v2/directions/driving-car'; // JANGAN tambahkan query string di sini
+
         $response = Http::withHeaders([
             'Authorization' => $apiKey,
             'Content-Type' => 'application/json',
-        ])->post('https://api.openrouteservice.org/v2/directions/driving-car', [
-            'coordinates' => $coordinates,
-        ]);
+        ])->withBody(json_encode([
+            'coordinates' => $coordinates
+        ]), 'application/json')->post($url);
 
         if (!$response->successful()) {
-            Log::error('ORS API gagal:', ['body' => $response->body()]);
+            Log::error('ORS API error:', ['body' => $response->body()]);
             return null;
         }
 
         $data = $response->json();
 
-        // Validasi keberadaan fitur jarak
-        if (
-            isset($data['features'][0]['properties']['segments'][0]['distance'])
-        ) {
-            $distanceInMeters = $data['features'][0]['properties']['segments'][0]['distance'];
-            return round($distanceInMeters / 1000, 2); // dalam KM
-        } else {
-            Log::warning('ORS API respons tidak sesuai:', ['data' => $data]);
-            return null;
+        if (isset($data['routes'][0]['summary']['distance'])) {
+            $distance = $data['routes'][0]['summary']['distance'];
+            return round($distance / 1000, 2); // kilometer
         }
+
+        Log::warning('ORS API respons tidak sesuai:', ['data' => $data]);
+        return null;
     }
 
 

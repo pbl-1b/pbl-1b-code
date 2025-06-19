@@ -217,6 +217,11 @@
                 </select>
             </div>
 
+            <div>
+                <label for="durasi_perjalanan" class="block font-semibold text-gray-800 mb-1">Alamat Rumah</label>
+                <input type="number" required placeholder="Durasi Perjalanan (dalam menit)" name="durasi_perjalanan" id="durasi_perjalanan" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
             <!-- Submit Button -->
             <div class="flex justify-end mt-6 pt-4 border-t">
                 <button 
