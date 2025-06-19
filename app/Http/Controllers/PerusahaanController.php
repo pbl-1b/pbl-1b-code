@@ -4,16 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Perusahaan;
 use App\Models\Service;
-use App\Models\StaffPerusahaan;
 use Illuminate\Http\Request;
 
 class PerusahaanController extends Controller
 {
     public function index()
     {
-        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
+        if ($redirect = $this->checkifLoginForStaff()) {
+            return $redirect;
+        }
         $perusahaans = Perusahaan::latest()->paginate(5);
-        $dataType = 'perusahaan';
+        $dataType    = 'perusahaan';
         // $perjalanans = PerjalananKaryawanPerusahaan::all();
 
         // return ($perjalanans);
@@ -22,14 +23,19 @@ class PerusahaanController extends Controller
 
     public function delete($id)
     {
-        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
+        if ($redirect = $this->checkifLoginForStaff()) {
+            return $redirect;
+        }
         Perusahaan::destroy($id);
+
         return redirect('dashboard/staff/perusahaan')->with('success', 'Data Successfully Deleted');
     }
 
     public function edit($id)
     {
-        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
+        if ($redirect = $this->checkifLoginForStaff()) {
+            return $redirect;
+        }
         $services = Service::all();
 
         $oldData = Perusahaan::find($id);
@@ -41,7 +47,9 @@ class PerusahaanController extends Controller
 
     public function update(Request $request, string $id)
     {
-        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
+        if ($redirect = $this->checkifLoginForStaff()) {
+            return $redirect;
+        }
         $validatedData = $request->validate([
             'company_name' => 'required',
             'service_name' => 'required',
@@ -56,6 +64,6 @@ class PerusahaanController extends Controller
             'alamat' => $request->address,
         ]);
 
-        return redirect('dashboard/staff/perusahaan/edit/' . $id . '')->with('success', 'Data Successfully Updated');
+        return redirect('dashboard/staff/perusahaan/edit/'.$id.'')->with('success', 'Data Successfully Updated');
     }
 }

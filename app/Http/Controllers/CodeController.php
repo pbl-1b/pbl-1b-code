@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Code;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Models\Code;
 
 class CodeController extends Controller
 {
     public function generateCode(Request $request)
     {
-        $codeStr = 'STAFF-' . strtoupper(Str::random(6));
+        $codeStr = 'STAFF-'.strtoupper(Str::random(6));
 
         // Cek apakah kode sudah pernah dibuat
         $checkDuplicate = Code::where('code', $codeStr)->first();
@@ -24,7 +24,7 @@ class CodeController extends Controller
         $code = Code::create([
             'code' => $codeStr,
             'code_type' => 'STAFF',
-            'status' => 'UNUSED'
+            'status' => 'UNUSED',
         ]);
 
         return response()->json(['staff_code' => $codeStr]);

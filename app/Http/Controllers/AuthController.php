@@ -2,19 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Code;
+use App\Models\KaryawanPerusahaan;
+use App\Models\StaffMitra;
+use App\Models\StaffPerusahaan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\StaffMitra;
-use App\Models\StaffPerusahaan;
-use App\Models\KaryawanPerusahaan;
-use App\Models\Code;
 
 class AuthController extends Controller
 {
     public function viewLogin()
     {
-        if ($redirect = $this->checkifLogin()) return $redirect;
+        if ($redirect = $this->checkifLogin()) {
+            return $redirect;
+        }
+
         return view('auth.login');
     }
 
@@ -25,7 +28,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $email = $request->email;
+        $email    = $request->email;
         $password = $request->password;
         $remember = $request->has('remember');
 
@@ -71,7 +74,10 @@ class AuthController extends Controller
 
     public function viewRegister()
     {
-        if ($redirect = $this->checkifLogin()) return $redirect;
+        if ($redirect = $this->checkifLogin()) {
+            return $redirect;
+        }
+
         return view('auth.register');
     }
 
@@ -87,7 +93,7 @@ class AuthController extends Controller
 
         $code = Code::where('code', $validated['code'])->first();
 
-        if (!$code) {
+        if (! $code) {
             return redirect()->back()->withErrors(['code' => 'Invalid code']);
         }
 
@@ -95,7 +101,7 @@ class AuthController extends Controller
             return redirect()->back()->withErrors(['code' => 'Code already used']);
         }
 
-        $checkDuplicateAcc = $this->checkDuplicateAcc($validated['email']);
+        $checkDuplicateAcc  = $this->checkDuplicateAcc($validated['email']);
         $checkDuplicateName = $this->checkDuplicateName($validated['name']);
 
         if ($checkDuplicateName) {
@@ -108,16 +114,16 @@ class AuthController extends Controller
         $idCode = $code->id;
 
         if ($code->code_type == 'STAFF') {
-            $staffMitra = new StaffMitra();
+            $staffMitra             = new StaffMitra;
             $staffMitra->nama_staff = $validated['name'];
-            $staffMitra->email = $validated['email'];
-            $staffMitra->password = Hash::make($validated['password']);
-            $staffMitra->id_code = $idCode;
+            $staffMitra->email      = $validated['email'];
+            $staffMitra->password   = Hash::make($validated['password']);
+            $staffMitra->id_code    = $idCode;
             $staffMitra->save();
 
             $code->status = 'USED';
             $code->save();
-        } else if ($code->code_type == 'EMPLOYEE') {
+        } elseif ($code->code_type == 'EMPLOYEE') {
             return redirect()->route('employee.register', ['data' => $validated]);
         }
 
@@ -176,9 +182,9 @@ class AuthController extends Controller
         Auth::guard('staffPerusahaan')->logout();
         Auth::guard('karyawanPerusahaan')->logout();
         session()->forget(['role', 'id']);
+
         return redirect()->route('login');
     }
-
 
     public function checkifLogin()
     {

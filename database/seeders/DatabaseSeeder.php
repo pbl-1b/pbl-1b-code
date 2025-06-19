@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\AlamatRumah;
 use App\Models\BahanBakar;
+use App\Models\Code;
 use App\Models\HasilAnalisisEmisi;
 use App\Models\HasilKonsultasi;
 use App\Models\Informasi;
@@ -11,16 +12,13 @@ use App\Models\KaryawanPerusahaan;
 use App\Models\Perjalanan;
 use App\Models\PerjalananKaryawanPerusahaan;
 use App\Models\Perusahaan;
+use App\Models\Pesan;
 use App\Models\Service;
 use App\Models\StaffMitra;
 use App\Models\staffPerusahaan;
 use App\Models\Transportasi;
-use App\Models\User;
-use App\Models\Code;
-use App\Models\Pesan;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Symfony\Component\Mailer\Transport;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -58,7 +56,7 @@ class DatabaseSeeder extends Seeder
             'nama_service' => 'Service 1',
             'durasi_service' => '30',
             'harga_service' => '100000',
-            'deskripsi_service' => 'Service 1 deskripsi'
+            'deskripsi_service' => 'Service 1 deskripsi',
         ]);
 
         Perusahaan::create([
@@ -139,7 +137,7 @@ class DatabaseSeeder extends Seeder
             'nama_analisis' => 'Hasil Analisis Emisi 1',
             'id_perusahaan' => '1',
             'tanggal_analisis' => '2023-01-01',
-            'file_pdf' => 'text.pdf'
+            'file_pdf' => 'text.pdf',
         ]);
 
         PerjalananKaryawanPerusahaan::create([

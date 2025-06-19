@@ -9,9 +9,11 @@ class BahanBakarController extends Controller
 {
     public function index()
     {
-        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
+        if ($redirect = $this->checkifLoginForStaff()) {
+            return $redirect;
+        }
         $bahanBakars = BahanBakar::latest()->paginate(5);
-        $dataType = 'bahanBakar';
+        $dataType    = 'bahanBakar';
         // $bahanBakars = PerjalananKaryawanPerusahaan::all();
 
         // return ($alamats);
@@ -20,13 +22,18 @@ class BahanBakarController extends Controller
 
     public function add()
     {
-        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
+        if ($redirect = $this->checkifLoginForStaff()) {
+            return $redirect;
+        }
+
         return view('dashboardStaff.layouts.bahanBakar.add');
     }
 
     public function store(Request $request)
     {
-        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
+        if ($redirect = $this->checkifLoginForStaff()) {
+            return $redirect;
+        }
         $validatedData = $request->validate([
             'fuel_name' => 'required',
             'emission' => 'required',
@@ -45,14 +52,19 @@ class BahanBakarController extends Controller
 
     public function delete($id)
     {
-        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
+        if ($redirect = $this->checkifLoginForStaff()) {
+            return $redirect;
+        }
         BahanBakar::destroy($id);
+
         return redirect('dashboard/staff/bahanBakar')->with('success', 'Data Successfully Deleted');
     }
 
     public function edit($id)
     {
-        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
+        if ($redirect = $this->checkifLoginForStaff()) {
+            return $redirect;
+        }
         $oldData = BahanBakar::find($id);
 
         // return ($oldData);
@@ -62,7 +74,9 @@ class BahanBakarController extends Controller
 
     public function update(Request $request, string $id)
     {
-        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
+        if ($redirect = $this->checkifLoginForStaff()) {
+            return $redirect;
+        }
         $validatedData = $request->validate([
             'fuel_name' => 'required',
             'emission' => 'required',
@@ -76,13 +90,16 @@ class BahanBakarController extends Controller
             'harga_bahan_bakar_per_liter' => $request->cost,
         ]);
 
-        return redirect('dashboard/staff/bahanBakar/edit/' . $id . '')->with('success', 'Data Successfully Updated');
+        return redirect('dashboard/staff/bahanBakar/edit/'.$id.'')->with('success', 'Data Successfully Updated');
     }
 
     public function restore(string $id)
     {
-        if ($redirect = $this->checkifLoginForStaff()) return $redirect;
+        if ($redirect = $this->checkifLoginForStaff()) {
+            return $redirect;
+        }
         BahanBakar::withTrashed()->where('id', $id)->restore();
+
         return redirect('dashboard/staff/bahanBakar')->with('success', 'Data Successfully Restored');
     }
 }

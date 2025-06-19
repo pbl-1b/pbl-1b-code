@@ -17,28 +17,30 @@ class PerjalananKaryawanController extends Controller
 {
     public function index(Request $request)
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
 
         $query = PerjalananKaryawanPerusahaan::query();
 
         // Filter nama_karyawan
         if ($request->filled('nama_karyawan')) {
             $query->whereHas('karyawanPerusahaan', function ($q) use ($request) {
-                $q->where('nama_karyawan', 'like', '%' . $request->nama_karyawan . '%');
+                $q->where('nama_karyawan', 'like', '%'.$request->nama_karyawan.'%');
             });
         }
 
         // Filter nama_bahan_bakar
         if ($request->filled('nama_bahan_bakar')) {
             $query->whereHas('bahanBakar', function ($q) use ($request) {
-                $q->where('nama_bahan_bakar', 'like', '%' . $request->nama_bahan_bakar . '%');
+                $q->where('nama_bahan_bakar', 'like', '%'.$request->nama_bahan_bakar.'%');
             });
         }
 
         // Filter nama_transportasi
         if ($request->filled('nama_transportasi')) {
             $query->whereHas('transportasi', function ($q) use ($request) {
-                $q->where('nama_transportasi', 'like', '%' . $request->nama_transportasi . '%');
+                $q->where('nama_transportasi', 'like', '%'.$request->nama_transportasi.'%');
             });
         }
 
@@ -51,8 +53,8 @@ class PerjalananKaryawanController extends Controller
 
         $perjalanans = $query->paginate(5);
 
-        $karyawans = KaryawanPerusahaan::all();
-        $bahanbakars = BahanBakar::all();
+        $karyawans     = KaryawanPerusahaan::all();
+        $bahanbakars   = BahanBakar::all();
         $transportasis = Transportasi::all();
 
         return view('dashboardPerusahaan.layouts.perjalananKaryawanPerusahaan.view', [
@@ -61,14 +63,16 @@ class PerjalananKaryawanController extends Controller
             'dataTransportasi' => $transportasis,
             'data' => $perjalanans,
             'dataType' => 'perjalanan',
-            'request' => $request
+            'request' => $request,
         ]);
     }
 
     public function absen(Request $request)
     {
 
-        if ($redirect = $this->checkifLoginForEmployee()) return $redirect;
+        if ($redirect = $this->checkifLoginForEmployee()) {
+            return $redirect;
+        }
 
         $validatedData = $request->validate([
             'alamat_rumah' => 'required',
@@ -82,20 +86,20 @@ class PerjalananKaryawanController extends Controller
         $emisiKarbonPermenit = BahanBakar::where('id', $request->bahan_bakar)->first()->emisi_karbon_permenit;
 
         $alamatRumah = AlamatRumah::find($request->alamat_rumah);
-        $perusahaan = Perusahaan::find($idPerusahaan);
+        $perusahaan  = Perusahaan::find($idPerusahaan);
 
-        if (!$alamatRumah || !$perusahaan) {
+        if (! $alamatRumah || ! $perusahaan) {
             return response()->json(['error' => 'Data lokasi tidak ditemukan.'], 404);
         }
 
         $start = [
             'lat' => (float) $alamatRumah->latitude,
-            'lng' => (float) $alamatRumah->longitude
+            'lng' => (float) $alamatRumah->longitude,
         ];
 
         $end = [
             'lat' => (float) $perusahaan->latitude,
-            'lng' => (float) $perusahaan->longitude
+            'lng' => (float) $perusahaan->longitude,
         ];
 
         // $latitudePerusahan = Perusahaan::where('id', $idPerusahaan)->first()->latitude;
@@ -140,11 +144,12 @@ class PerjalananKaryawanController extends Controller
             'Authorization' => $apiKey,
             'Content-Type' => 'application/json',
         ])->withBody(json_encode([
-            'coordinates' => $coordinates
+            'coordinates' => $coordinates,
         ]), 'application/json')->post($url);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             Log::error('ORS API error:', ['body' => $response->body()]);
+
             return null;
         }
 
@@ -152,39 +157,41 @@ class PerjalananKaryawanController extends Controller
 
         if (isset($data['routes'][0]['summary']['distance'])) {
             $distance = $data['routes'][0]['summary']['distance'];
+
             return round($distance / 1000, 2); // kilometer
         }
 
         Log::warning('ORS API respons tidak sesuai:', ['data' => $data]);
+
         return null;
     }
 
-
-
     public function indexKaryawan(Request $request)
     {
-        if ($redirect = $this->checkifLoginForEmployee()) return $redirect;
+        if ($redirect = $this->checkifLoginForEmployee()) {
+            return $redirect;
+        }
 
         $query = PerjalananKaryawanPerusahaan::query();
 
         // Filter nama_karyawan
         if ($request->filled('nama_karyawan')) {
             $query->whereHas('karyawanPerusahaan', function ($q) use ($request) {
-                $q->where('nama_karyawan', 'like', '%' . $request->nama_karyawan . '%');
+                $q->where('nama_karyawan', 'like', '%'.$request->nama_karyawan.'%');
             });
         }
 
         // Filter nama_bahan_bakar
         if ($request->filled('nama_bahan_bakar')) {
             $query->whereHas('bahanBakar', function ($q) use ($request) {
-                $q->where('nama_bahan_bakar', 'like', '%' . $request->nama_bahan_bakar . '%');
+                $q->where('nama_bahan_bakar', 'like', '%'.$request->nama_bahan_bakar.'%');
             });
         }
 
         // Filter nama_transportasi
         if ($request->filled('nama_transportasi')) {
             $query->whereHas('transportasi', function ($q) use ($request) {
-                $q->where('nama_transportasi', 'like', '%' . $request->nama_transportasi . '%');
+                $q->where('nama_transportasi', 'like', '%'.$request->nama_transportasi.'%');
             });
         }
 
@@ -197,8 +204,8 @@ class PerjalananKaryawanController extends Controller
 
         $perjalanans = $query->paginate(5);
 
-        $karyawans = KaryawanPerusahaan::all();
-        $bahanbakars = BahanBakar::all();
+        $karyawans     = KaryawanPerusahaan::all();
+        $bahanbakars   = BahanBakar::all();
         $transportasis = Transportasi::all();
 
         return view('dashboardKaryawan.layouts.perjalananKaryawanPerusahaan.view', [
@@ -207,24 +214,28 @@ class PerjalananKaryawanController extends Controller
             'dataTransportasi' => $transportasis,
             'data' => $perjalanans,
             'dataType' => 'perjalanan',
-            'request' => $request
+            'request' => $request,
         ]);
     }
 
     public function add()
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
         $transportasis = Transportasi::all();
-        $bahanbakars = BahanBakar::all();
-        $alamats = AlamatRumah::all();
-        $karyawans = KaryawanPerusahaan::all();
+        $bahanbakars   = BahanBakar::all();
+        $alamats       = AlamatRumah::all();
+        $karyawans     = KaryawanPerusahaan::all();
 
         return view('dashboardPerusahaan.layouts.perjalananKaryawanPerusahaan.add', ['dataTransportasi' => $transportasis, 'dataBahanBakar' => $bahanbakars, 'dataAlamat' => $alamats, 'dataKaryawan' => $karyawans]);
     }
 
     public function store(Request $request)
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
         $validatedData = $request->validate([
             'employee_name' => 'required',
             'transportation' => 'required',
@@ -262,27 +273,33 @@ class PerjalananKaryawanController extends Controller
 
     public function delete($id)
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
         PerjalananKaryawanPerusahaan::destroy($id);
+
         return redirect('dashboard/perusahaan/perjalanan')->with('success', 'Data Successfully Deleted');
     }
 
     public function destroy($id)
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
         PerjalananKaryawanPerusahaan::findOrFail($id)->delete();
 
         return redirect()->back()->with('deleted', 'Data berhasil dihapus');
     }
 
-
     public function edit($id)
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
         $transportasis = Transportasi::all();
-        $bahanbakars = BahanBakar::all();
-        $alamats = AlamatRumah::all();
-        $karyawans = KaryawanPerusahaan::all();
+        $bahanbakars   = BahanBakar::all();
+        $alamats       = AlamatRumah::all();
+        $karyawans     = KaryawanPerusahaan::all();
 
         $oldData = PerjalananKaryawanPerusahaan::find($id);
 
@@ -293,7 +310,9 @@ class PerjalananKaryawanController extends Controller
 
     public function update(Request $request, string $id)
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
         $validatedData = $request->validate([
             'employee_name' => 'required',
             'transportation' => 'required',
@@ -313,9 +332,9 @@ class PerjalananKaryawanController extends Controller
             'id_alamat' => $request->address,
             'tanggal_perjalanan' => $request->trip_date,
             'durasi_perjalanan' => $request->trip_duration,
-            'total_emisi_karbon' =>  $bahanBakar->emisi_karbon_permenit * $request->trip_duration,
+            'total_emisi_karbon' => $bahanBakar->emisi_karbon_permenit * $request->trip_duration,
         ]);
 
-        return redirect('dashboard/perusahaan/perjalanan/edit/' . $id . '')->with('success', 'Data Successfully Updated');
+        return redirect('dashboard/perusahaan/perjalanan/edit/'.$id.'')->with('success', 'Data Successfully Updated');
     }
 }

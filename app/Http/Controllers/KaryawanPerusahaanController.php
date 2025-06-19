@@ -12,9 +12,11 @@ class KaryawanPerusahaanController extends Controller
 {
     public function index()
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
         $karyawans = KaryawanPerusahaan::latest()->paginate(5);
-        $dataType = 'karyawan';
+        $dataType  = 'karyawan';
         // $karyawans = PerjalananKaryawanPerusahaan::all();
 
         // return ($karyawans);
@@ -23,12 +25,14 @@ class KaryawanPerusahaanController extends Controller
 
     public function homeKaryawan()
     {
-        if ($redirect = $this->checkifLoginForEmployee()) return $redirect;
+        if ($redirect = $this->checkifLoginForEmployee()) {
+            return $redirect;
+        }
 
         $karyawans = KaryawanPerusahaan::latest()->paginate(5);
 
-        $alamats = AlamatRumah::all();
-        $bahanBakars = BahanBakar::all();
+        $alamats       = AlamatRumah::all();
+        $bahanBakars   = BahanBakar::all();
         $transportasis = Transportasi::all();
 
         $dataType = 'karyawan';
@@ -66,14 +70,19 @@ class KaryawanPerusahaanController extends Controller
 
     public function delete($id)
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
         KaryawanPerusahaan::destroy($id);
+
         return redirect('dashboard/perusahaan/karyawan')->with('success', 'Data Successfully Deleted');
     }
 
     public function edit($id)
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
         $oldData = KaryawanPerusahaan::find($id);
 
         // return ($oldData);
@@ -83,7 +92,9 @@ class KaryawanPerusahaanController extends Controller
 
     public function update(Request $request, string $id)
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
         $validatedData = $request->validate([
             'employee_name' => 'required',
             'position' => 'required',
@@ -100,13 +111,16 @@ class KaryawanPerusahaanController extends Controller
             'tanggal_lahir' => $request->birth_date,
         ]);
 
-        return redirect('dashboard/perusahaan/karyawan/edit/' . $id . '')->with('success', 'Data Successfully Updated');
+        return redirect('dashboard/perusahaan/karyawan/edit/'.$id.'')->with('success', 'Data Successfully Updated');
     }
 
     public function restore(string $id)
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
         KaryawanPerusahaan::withTrashed()->where('id', $id)->restore();
+
         return redirect('dashboard/perusahaan/service')->with('success', 'Data Successfully Restored');
     }
 }

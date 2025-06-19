@@ -4,22 +4,18 @@ use App\Http\Controllers\AlamatRumahController;
 use App\Http\Controllers\AnalisisEmisiKarbonController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BahanBakarController;
+use App\Http\Controllers\CodeController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InformasiController;
 use App\Http\Controllers\KaryawanPerusahaanController;
 use App\Http\Controllers\KonsultasiController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MapController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PerjalananKaryawanController;
 use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\ServiceController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\CodeController;
-use App\Http\Controllers\MapController;
-use App\Http\Controllers\HalamanKaryawananController;
-use App\Http\Controllers\PaymentController;
-use App\Models\BahanBakar;
-use App\Models\Informasi;
 use App\Models\Service;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -28,6 +24,7 @@ Route::post('/get-snap-token', [PaymentController::class, 'getSnapToken'])->name
 
 Route::post('/set-payment-success', function () {
     session(['payment_success' => true]);
+
     return response()->json(['status' => 'ok']);
 });
 
@@ -37,14 +34,12 @@ Route::post('/insertcompany', [PaymentController::class, 'insertFromFrontend']);
 // routes/web.php (Laravel)
 Route::get('/check-status/{order_id}', [PaymentController::class, 'checkStatus']);
 
-
 Route::post('/store-location', [MapController::class, 'store'])->name('store.location');
 
 Route::get('/login', [AuthController::class, 'viewLogin'])->name('login.view');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/register', [AuthController::class, 'viewRegister'])->name('register.view');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
-
 
 Route::get('/services', [HomeController::class, 'services'])->name('services');
 Route::get('/about', [HomeController::class, 'about'])->name('about');

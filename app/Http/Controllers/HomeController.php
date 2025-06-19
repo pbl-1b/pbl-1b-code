@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Service;
-use Illuminate\Http\Request;
-use Midtrans\Snap;
-use Midtrans\Config;
 
 class HomeController extends Controller
 {

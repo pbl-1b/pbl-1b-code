@@ -4,15 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\AlamatRumah;
 use App\Models\KaryawanPerusahaan;
-
 use Illuminate\Http\Request;
 
 class AlamatRumahController extends Controller
 {
     public function index()
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
-        $alamats = AlamatRumah::latest()->paginate(5);
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
+        $alamats  = AlamatRumah::latest()->paginate(5);
         $dataType = 'alamat';
         // $alamats = PerjalananKaryawanPerusahaan::all();
 
@@ -22,7 +23,9 @@ class AlamatRumahController extends Controller
 
     public function indexAlamatKaryawan()
     {
-        if ($redirect = $this->checkifLoginForEmployee()) return $redirect;
+        if ($redirect = $this->checkifLoginForEmployee()) {
+            return $redirect;
+        }
         $alamats = AlamatRumah::where('id_karyawan', session('id'))
             ->latest()
             ->paginate(5);
@@ -36,7 +39,9 @@ class AlamatRumahController extends Controller
 
     public function add()
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
         $karyawans = KaryawanPerusahaan::all();
 
         return view('dashboardPerusahaan.layouts.alamatRumah.add', ['dataKaryawan' => $karyawans]);
@@ -44,16 +49,18 @@ class AlamatRumahController extends Controller
 
     public function store(Request $request)
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
         Controller::checkifLoginForCompany();
         $validatedData = $request->validate([
             'employee_name' => 'required',
-            'address' => 'required'
+            'address' => 'required',
         ]);
 
         AlamatRumah::create([
             'id_karyawan' => $request->employee_name,
-            'alamat_rumah' => $request->address
+            'alamat_rumah' => $request->address,
         ]);
 
         return redirect('dashboard/perusahaan/alamat/add')->with('success', 'Data Successfully Added');
@@ -61,15 +68,20 @@ class AlamatRumahController extends Controller
 
     public function delete($id)
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
         Controller::checkifLoginForCompany();
         AlamatRumah::destroy($id);
+
         return redirect('dashboard/perusahaan/alamat')->with('success', 'Data Successfully Deleted');
     }
 
     public function edit($id)
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
         Controller::checkifLoginForCompany();
         $karyawans = KaryawanPerusahaan::all();
 
@@ -82,26 +94,31 @@ class AlamatRumahController extends Controller
 
     public function update(Request $request, string $id)
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
         Controller::checkifLoginForCompany();
         $validatedData = $request->validate([
             'employee_name' => 'required',
-            'address' => 'required'
+            'address' => 'required',
         ]);
 
         AlamatRumah::where('id', $id)->update([
             'id_karyawan' => $request->employee_name,
-            'alamat_rumah' => $request->address
+            'alamat_rumah' => $request->address,
         ]);
 
-        return redirect('dashboard/perusahaan/alamat/edit/' . $id . '')->with('success', 'Data Successfully Updated');
+        return redirect('dashboard/perusahaan/alamat/edit/'.$id.'')->with('success', 'Data Successfully Updated');
     }
 
     public function restore(string $id)
     {
-        if ($redirect = $this->checkifLoginForCompany()) return $redirect;
+        if ($redirect = $this->checkifLoginForCompany()) {
+            return $redirect;
+        }
         Controller::checkifLoginForCompany();
         AlamatRumah::withTrashed()->where('id', $id)->restore();
+
         return redirect('dashboard/perusahaan/alamat')->with('success', 'Data Successfully Restored');
     }
 }
