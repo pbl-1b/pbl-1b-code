@@ -110,8 +110,10 @@ return new class extends Migration
         // Tabel alamat rumah (membutuhkan karyawan)
         Schema::create('alamat_rumahs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_karyawan')->constrained('karyawan_perusahaans');
             $table->string('alamat_rumah');
+            $table->foreignId('id_karyawan')->constrained('karyawan_perusahaans');
+            $table->string('latitude');
+            $table->string('longitude');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -149,6 +151,7 @@ return new class extends Migration
             $table->foreignId('id_alamat')->constrained('alamat_rumahs');
             $table->date('tanggal_perjalanan');
             $table->integer('durasi_perjalanan');
+            $table->integer('jarak_perjalanan');
             $table->integer('total_emisi_karbon');
             $table->timestamps();
             $table->softDeletes();

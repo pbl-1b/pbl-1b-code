@@ -1,4 +1,4 @@
-@extends('dashboardPerusahaan.layouts.app')
+@extends('dashboardKaryawan.layouts.app')
 
 @section('title', 'Company Employees Commute')
 

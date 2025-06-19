@@ -57,20 +57,6 @@
         showConfirmPassword: false,
         errors: {},
         
-        services: [
-            @foreach ($services as $service)
-            {
-                id: '{{ $service->id }}',
-                name: '{{ $service->nama_service }}',
-                price: '{{ $service->harga_service }}',
-                period: 'monthly',
-                description: '{{ $service->deskripsi_service }}',
-                features: ['Carbon footprint tracking', 'Basic reporting', 'Email support'],
-                recommended: false
-            },
-            @endforeach
-        ],
-        
         selectService(serviceId) {
             this.selectedService = serviceId;
             if (this.errors.service) {
@@ -127,7 +113,7 @@
                         </div>
                     </div>
                     <div>
-                        <h1 class="text-lg font-semibold text-gray-800">Service Registration</h1>
+                        <h1 class="text-lg font-semibold text-gray-800">Service Registration Success</h1>
                     </div>
                     <div class="w-24"></div> <!-- Empty div for balance -->
                 </div>
@@ -135,99 +121,31 @@
         </header>
 
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <!-- Registration Form Section -->
+            <!-- Registration Section -->
             <div class="bg-white rounded-md shadow-sm shadow-blue-100 border border-gray-300 p-6 mb-6">
                 <h2 class="text-xl font-semibold text-gray-800 mb-6">Registration Details</h2>
 
-                <form class="space-y-6" id="payment-form" method="post" action="{{ route('getSnapToken') }}">
-                    <!-- Email Input -->
-                    <div>
-                        <label for="companyName" class="block text-sm font-medium text-gray-700 mb-1">
-                            Company Name <span class="text-red-500">*</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="companyName"
-                            name="companyName"
-                            x-model="companyName"
-                            class="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                            :class="errors.companyName ? 'border-red-300' : 'border-gray-300'"
-                            placeholder="Your Company Name"
-                        />
-                        <div x-show="errors.companyName" class="mt-1 text-sm text-red-600" x-text="errors.companyName" x-cloak></div>
-                    </div>
-
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-                            Email Address <span class="text-red-500">*</span>
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            x-model="email"
-                            class="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                            :class="errors.email ? 'border-red-300' : 'border-gray-300'"
-                            placeholder="your.email@example.com"
-                        />
-                        <div x-show="errors.email" class="mt-1 text-sm text-red-600" x-text="errors.email" x-cloak></div>
-                    </div>
-
-                    <div onclick="openMapModal()" class="bg-blue-500 text-white px-4 py-2 rounded">
-                        Select Company Address
-                    </div>
-                    
-                    <input type="hidden" name="latitude" id="latitude">
-                    <input type="hidden" name="longitude" id="longitude">
-                    <input type="hidden" name="idService" id="idService" x-model="selectedService">
-
-                    <!-- Service Summary -->
-                    <div x-show="selectedService" class="bg-gray-50 p-4 rounded-md border border-gray-200" x-cloak>
-                        <h3 class="text-sm font-medium text-gray-700 mb-2">Selected Plan</h3>
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <p class="font-medium text-gray-900" x-text="getSelectedService()?.name"></p>
-                                <p class="text-sm text-gray-500" x-text="getSelectedService()?.description"></p>
-                            </div>
-                            <p class="font-bold text-gray-900">
-                                <span x-text="getSelectedService()?.price"></span>/<span x-text="getSelectedService()?.period"></span>
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Payment Security Notice -->
-                    <div class="flex items-center gap-2 p-4 bg-blue-50 rounded-md border border-blue-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <!-- Payment Security Notice -->
+                    <div class="flex items-center gap-2 p-4 bg-green-50 mb-4 rounded-md border border-green-100">
+                        {{-- <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                        <p class="text-sm text-blue-700">
-                            Your payment information is secure. We use industry-standard encryption to protect your data.
+                        </svg> --}}
+                        <p class="text-sm text-green-700">
+                            Company Account successfully Created and Saved, The Detail of Invoice Already Been Sended To Company Email
                         </p>
                     </div>
 
                     <!-- Submit Button -->
-                    <div class="pt-4 border-t border-gray-200">
+                    <a href="{{ route('register')}}" class="pt-4 border-t mt-4 border-gray-200">
                         <button
-                            type="submit"
-                            id="pay-button"
                             class="w-full md:w-auto bg-[#39AA80] hover:bg-[#39AA80] text-white px-6 py-2 rounded-md border border-[#39AA80] shadow-sm shadow-blue-50 flex items-center justify-center gap-2 transition-colors"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                            </svg>
-                            <span>Proceed to Payment</span>
+                            <span>Sign Up Staff Account Now</span>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                             </svg>
                         </button>
-                        <p class="mt-2 text-xs text-gray-500 flex items-center gap-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            Registration takes less than 2 minutes
-                        </p>
-                    </div>
-                </form>
+                    </a>
             </div>
         </main>
     </div>
@@ -258,8 +176,6 @@
             </div>
         </div>
     </div>
-
-
 
     <script>
         let map, marker;

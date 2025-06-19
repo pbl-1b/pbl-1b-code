@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AlamatRumah;
+use App\Models\BahanBakar;
 use App\Models\KaryawanPerusahaan;
+use App\Models\Transportasi;
 use Illuminate\Http\Request;
 
 class KaryawanPerusahaanController extends Controller
@@ -16,6 +19,23 @@ class KaryawanPerusahaanController extends Controller
 
         // return ($karyawans);
         return view('dashboardPerusahaan.layouts.karyawan.view', ['data' => $karyawans, 'dataType' => $dataType]);
+    }
+
+    public function homeKaryawan()
+    {
+        if ($redirect = $this->checkifLoginForEmployee()) return $redirect;
+
+        $karyawans = KaryawanPerusahaan::latest()->paginate(5);
+
+        $alamats = AlamatRumah::all();
+        $bahanBakars = BahanBakar::all();
+        $transportasis = Transportasi::all();
+
+        $dataType = 'karyawan';
+        // $karyawans = PerjalananKaryawanPerusahaan::all();
+
+        // return ($karyawans);
+        return view('dashboardKaryawan.layouts.karyawan.home', ['data' => $karyawans, 'dataType' => $dataType, 'alamats' => $alamats, 'bahanBakars' => $bahanBakars, 'transportasis' => $transportasis]);
     }
 
     // public function add()

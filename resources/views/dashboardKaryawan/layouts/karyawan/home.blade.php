@@ -1,0 +1,255 @@
+@extends('dashboardKaryawan.layouts.app')
+
+@section('title', 'Employees')
+
+@section('content')
+
+<div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">Employee Dashboard</h1>
+    <p class="text-gray-500">Welcome back, Employee! Here's what's happening.</p>
+</div>
+
+<div 
+    class="bg-white rounded-md shadow-sm shadow-blue-100 border border-gray-300 p-6 mb-6"
+    x-data="{ 
+        showModal: false,
+        selectedRow: {},
+    }"
+>
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+        <h2 class="text-xl font-semibold text-gray-800">Homes</h2>
+        <div class="flex flex-wrap gap-2">
+            <!-- Tombol Absen -->
+                <button 
+                    onclick="openAbsenModal()" 
+                    class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded transition"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 2a8 8 0 108 8 8 8 0 00-8-8zM9 11V7h2v4zm0 2h2v2H9z" />
+                    </svg>
+                    Absen Sekarang
+                </button>
+
+
+                {{-- <!-- Filter atau info tambahan -->
+                <select 
+                    class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
+                >
+                    <option value="today">Hari Ini</option>
+                    <option value="week">Minggu Ini</option>
+                    <option value="month">Bulan Ini</option>
+                </select> --}}
+
+                <!-- Status Absensi Hari Ini -->
+                <span class="px-3 py-1.5 bg-blue-100 text-blue-700 text-sm rounded-md font-medium">
+                    Status: Sudah Absen
+                </span>
+        </div>
+    </div>
+
+    {{-- <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <template x-for="(row, index) in filteredData" :key="index">
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" x-text="row.no"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="row.nama_karyawan"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="row.jabatan"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                            <div class="flex justify-center">
+                                <button 
+                                    @click="selectedRow = row; showModal = true"
+                                    class="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded"
+                                >
+                                    Detail
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </div>
+
+    {{ $data->links('vendor.pagination.custom') }} --}}
+
+    <!-- Modal Detail -->
+    <div 
+        x-show="showModal" 
+        x-transition 
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        style="display: none;"
+    >
+        <div 
+            @click.away="showModal = false; confirmDelete = false"
+            x-data="{ confirmDelete: false }"
+            class="bg-white w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl p-6 relative"
+        >
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center mb-4 border-b pb-3">
+                <h3 class="text-xl font-bold text-gray-800">Service Detail</h3>
+                <button 
+                    @click="showModal = false; confirmDelete = false" 
+                    class="text-gray-400 hover:text-gray-600 text-2xl font-bold focus:outline-none"
+                >
+                    &times;
+                </button>
+            </div>
+
+            <!-- Modal Actions -->
+            <div class="flex justify-between items-center mt-6 pt-4 border-t">
+                <!-- Edit Button -->
+                <a 
+                    :href="'{{ url('/dashboard/perusahaan/karyawan/edit') }}/' + selectedRow.id"
+                    class="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-white text-sm font-semibold rounded-md transition"
+                >
+                    Edit
+                </a>
+
+                <!-- Delete Button Group -->
+                <div class="flex gap-2 items-center">
+                    <!-- Confirm Prompt -->
+                    <template x-if="confirmDelete">
+                        <form 
+                            :action="'{{ url('/dashboard/perusahaan/karyawan') }}/' + selectedRow.id" 
+                            method="POST" 
+                            class="flex items-center gap-2"
+                        >
+                            @csrf
+                            @method('DELETE')
+
+                            <span class="text-sm text-red-500 font-medium">Are you sure?</span>
+
+                            <button 
+                                type="submit"
+                                class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm rounded-md transition"
+                            >
+                                Yes, Delete
+                            </button>
+
+                            <button 
+                                type="button"
+                                @click="confirmDelete = false"
+                                class="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm rounded-md transition"
+                            >
+                                Cancel
+                            </button>
+                        </form>
+                    </template>
+
+                    <!-- Trigger Delete -->
+                    <template x-if="!confirmDelete">
+                        <button 
+                            @click="confirmDelete = true"
+                            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-md transition"
+                        >
+                            Delete
+                        </button>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>  
+
+</div>
+
+<!-- Modal Form Absen -->
+<div 
+    id="modalFormAbsen"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50"
+>
+    <div 
+        class="bg-white w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl p-6 relative"
+    >
+        <!-- Modal Header -->
+        <div class="flex justify-between items-center mb-4 border-b pb-3">
+            <h3 class="text-xl font-bold text-gray-800">Form Absensi</h3>
+            <button 
+                onclick="closeAbsenModal()" 
+                class="text-gray-400 hover:text-gray-600 text-2xl font-bold focus:outline-none"
+            >
+                &times;
+            </button>
+        </div>
+
+        <!-- Modal Form Content -->
+        <form action="{{ route('absen') }}" method="POST" class="space-y-4 text-sm text-gray-700">
+            @csrf
+
+            <!-- Select Transportasi -->
+            <div>
+                <label for="transportasi" class="block font-semibold text-gray-800 mb-1">Transportasi</label>
+                <select name="transportasi" id="transportasi" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">Pilih Transportasi</option>
+                    @foreach ($transportasis as $transportasi)
+                        <option value="{{ $transportasi->id }}">{{ $transportasi->nama_transportasi }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Select Bahan Bakar -->
+            <div>
+                <label for="bahan_bakar" class="block font-semibold text-gray-800 mb-1">Bahan Bakar</label>
+                <select name="bahan_bakar" id="bahan_bakar" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">Pilih Bahan Bakar</option>
+                    @foreach ($bahanBakars as $bahanBakar)
+                        <option value="{{ $bahanBakar->id }}">{{ $bahanBakar->nama_bahan_bakar}}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Select Alamat Rumah -->
+            <div>
+                <label for="alamat_rumah" class="block font-semibold text-gray-800 mb-1">Alamat Rumah</label>
+                <select name="alamat_rumah" id="alamat_rumah" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">Pilih Alamat Rumah</option>
+                    @foreach ($alamats as $alamat)
+                        <option value="{{ $alamat->id }}">{{ $alamat->alamat_rumah }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end mt-6 pt-4 border-t">
+                <button 
+                    type="submit"
+                    class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-md transition"
+                >
+                    Simpan Absen
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    function openAbsenModal() {
+        document.getElementById('modalFormAbsen').classList.remove('hidden');
+        document.getElementById('modalFormAbsen').classList.add('flex');
+    }
+
+    function closeAbsenModal() {
+        document.getElementById('modalFormAbsen').classList.add('hidden');
+        document.getElementById('modalFormAbsen').classList.remove('flex');
+    }
+
+    // Tutup modal saat klik di luar konten
+    window.addEventListener('click', function(e) {
+        const modal = document.getElementById('modalFormAbsen');
+        if (e.target === modal) {
+            closeAbsenModal();
+        }
+    });
+</script>
+
+
+@endsection

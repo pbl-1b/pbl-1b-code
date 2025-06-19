@@ -20,6 +20,20 @@ class AlamatRumahController extends Controller
         return view('dashboardPerusahaan.layouts.alamatRumah.view', ['data' => $alamats, 'dataType' => $dataType]);
     }
 
+    public function indexAlamatKaryawan()
+    {
+        if ($redirect = $this->checkifLoginForEmployee()) return $redirect;
+        $alamats = AlamatRumah::where('id_karyawan', session('id'))
+            ->latest()
+            ->paginate(5);
+
+        $dataType = 'alamat';
+        // $alamats = PerjalananKaryawanPerusahaan::all();
+
+        // return ($alamats);
+        return view('dashboardKaryawan.layouts.alamatRumah.view', ['data' => $alamats, 'dataType' => $dataType]);
+    }
+
     public function add()
     {
         if ($redirect = $this->checkifLoginForCompany()) return $redirect;

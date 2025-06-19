@@ -429,7 +429,7 @@
                         }).then(() => {
                             setTimeout(() => {
                                 window.location.href = "{{ route('register.success') }}";
-                            }, 5000);
+                            }, 1000);
                         });
                     })
                     .catch(error => {

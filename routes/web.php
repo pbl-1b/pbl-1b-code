@@ -53,10 +53,9 @@ Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 
 Route::redirect('/dashboard/staff', '/dashboard/staff/perusahaan')->name('dashboard.staff');
 Route::redirect('/dashboard/perusahaan', '/dashboard/perusahaan/karyawan')->name('dashboard.perusahaan');
-// Route::get('/dashboard/perjalanan', [PerjalananKaryawanController::class, 'index']);
+Route::redirect('/dashboard/karyawan', '/dashboard/karyawan/perjalanan')->name('dashboard.karyawan');
 
 Route::post('/generate-code', [CodeController::class, 'generateCode'])->name('code.generate');
-
 
 // Perjalanan Karyawan Perusahaan
 Route::get('dashboard/perusahaan/perjalanan', [PerjalananKaryawanController::class, 'index'])->name('perjalananKaryawanPerusahaan.index');
@@ -135,7 +134,6 @@ Route::get('dashboard/perusahaan/analisis/tabelanalisis', [AnalisisEmisiKarbonCo
 Route::get('dashboard/perusahaan/analisis-pdf', [AnalisisEmisiKarbonController::class, 'prosesAnalisis'])->name('analisis.analisis');
 // Route::post('dashboard/perusahaan/analisis/pdf', [AnalisisEmisiKarbonController::class, 'exportPdf'])->name('analisis.pdf');
 
-
 Route::get('dashboard/perusahaan/konsultasi', [KonsultasiController::class, 'index'])->name('konsultasi.index');
 Route::get('dashboard/perusahaan/konsultasi/edit/{id}', [KonsultasiController::class, 'edit'])->name('konsultasi.edit');
 Route::get('dashboard/perusahaan/konsultasi/add', [KonsultasiController::class, 'add'])->name('konsultasi.add');
@@ -145,6 +143,8 @@ Route::put('dashboard/perusahaan/konsultasi/edit/{id}', [KonsultasiController::c
 Route::delete('dashboard/perusahaan/konsultasi/{id}', [KonsultasiController::class, 'delete'])->name('konsultasi.delete');
 Route::get('dashboard/perusahaan/konsultasi/restore/{id}', [KonsultasiController::class, 'restore'])->name('konsultasi.restore');
 
+Route::get('dashboard/karyawan/', [KaryawanPerusahaanController::class, 'homeKaryawan'])->name('karyawan.home');
+Route::post('dashboard/absen/', [PerjalananKaryawanController::class, 'absen'])->name('absen');
 Route::get('dashboard/karyawan/perjalanan', [PerjalananKaryawanController::class, 'indexKaryawan'])->name('karyawan.perjalanan.index');
 Route::get('dashboard/karyawan/perjalanan/edit/{id}', [PerjalananKaryawanController::class, 'editKaryawan'])->name('karyawan.perjalanan.edit');
 Route::get('dashboard/karyawan/perjalanan/add', [PerjalananKaryawanController::class, 'addKaryawan'])->name('karyawan.perjalanan.add');
@@ -154,15 +154,14 @@ Route::put('dashboard/karyawan/perjalanan/edit/{id}', [PerjalananKaryawanControl
 Route::delete('dashboard/karyawan/perjalanan/{id}', [PerjalananKaryawanController::class, 'deleteKaryawan'])->name('karyawan.perjalanan.delete');
 Route::get('dashboard/karyawan/perjalanan/restore/{id}', [PerjalananKaryawanController::class, 'restoreKaryawan'])->name('karyawan.perjalanan.restore');
 
-
-
-// Route::get('dashboard/karyawan/konsultasi', [HalamanKaryawananController::class, 'index'])->name('halamanKaryawan.index');
-// Route::get('dashboard/karyawan/halamanKaryawan/edit/{id}', [HalamanKaryawananController::class, 'edit'])->name('halamanKaryawan.edit');
-// Route::get('dashboard/karyawan/halamanKaryawa/add', [HalamanKaryawananController::class, 'add'])->name('halamanKaryawa.add');
-// Route::post('dashboard/karyawan/halamanKaryawa', [HalamanKaryawananController::class, 'store'])->name('halamanKaryawa.store');
-// Route::put('dashboard/karyawan/halamanKaryawa/edit/{id}', [HalamanKaryawananController::class, 'update'])->name('halamanKaryawa.update');
-// Route::delete('dashboard/karyawan/halamanKaryawa/{id}', [HalamanKaryawananController::class, 'delete'])->name('halamanKaryawa.delete');
-// Route::get('dashboard/karyawan/halamanKaryawa/restore/{id}', [HalamanKaryawananController::class, 'restore'])->name('halamanKaryawa.restore');
+Route::get('dashboard/karyawan/alamat', [AlamatRumahController::class, 'indexAlamatKaryawan'])->name('karyawan.alamat.index');
+Route::get('dashboard/karyawan/alamat/edit/{id}', [AlamatRumahController::class, 'editAlamatKaryawan'])->name('karyawan.alamat.edit');
+Route::get('dashboard/karyawan/alamat/add', [AlamatRumahController::class, 'addAlamatKaryawan'])->name('karyawan.alamat.add');
+Route::post('dashboard/karyawan/alamat/add', [AlamatRumahController::class, 'uploadAlamatKaryawan'])->name('karyawan.alamat.upload');
+Route::post('dashboard/karyawan/alamat', [AlamatRumahController::class, 'storeAlamatKaryawan'])->name('karyawan.alamat.store');
+Route::put('dashboard/karyawan/alamat/edit/{id}', [AlamatRumahController::class, 'updateAlamatKaryawan'])->name('karyawan.alamat.update');
+Route::delete('dashboard/karyawan/alamat/{id}', [AlamatRumahController::class, 'deleteAlamatKaryawan'])->name('karyawan.alamat.delete');
+Route::get('dashboard/karyawan/alamat/restore/{id}', [AlamatRumahController::class, 'restoreAlamatKaryawan'])->name('karyawan.alamat.restore');
 
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 

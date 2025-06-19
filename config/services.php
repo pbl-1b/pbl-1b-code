@@ -43,4 +43,9 @@ return [
         'is3ds'         => true,
     ],
 
+    'openrouteservice' => [
+        'key' => env('ORS_API_KEY'),
+    ],
+
+
 ];

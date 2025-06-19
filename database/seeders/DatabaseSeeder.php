@@ -68,8 +68,8 @@ class DatabaseSeeder extends Seeder
             'email_perusahaan' => 'perusahaan@example.com',
             'kode_perusahaan' => '1234567890',
             'tanggal_aktif_service' => '2023-01-01',
-            'latitude' => '0',
-            'longitude' => '0',
+            'latitude' => '-0.9374172374330967',
+            'longitude' => '100.38717882145211',
         ]);
 
         staffPerusahaan::create([
@@ -120,7 +120,9 @@ class DatabaseSeeder extends Seeder
         AlamatRumah::create([
             'id' => '1',
             'id_karyawan' => '1',
-            'alamat_rumah' => 'Jl. Rumah 1',
+            'alamat_rumah' => 'Alamat Rumah',
+            'latitude' => '-0.9444594235485032',
+            'longitude' => '100.39095471478592',
         ]);
 
         Informasi::create([
@@ -149,6 +151,7 @@ class DatabaseSeeder extends Seeder
             'id_alamat' => '1',
             'tanggal_perjalanan' => '2023-01-01',
             'durasi_perjalanan' => '30',
+            'jarak_perjalanan' => '30',
             'total_emisi_karbon' => '100',
         ]);
 

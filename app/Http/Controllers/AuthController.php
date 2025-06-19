@@ -63,7 +63,7 @@ class AuthController extends Controller
             session(['email' => $karyawan->email]);
             Auth::guard('karyawanPerusahaan')->login($karyawan, $remember);
 
-            return redirect()->route('karyawanperusahaan');
+            return redirect()->route('dashboard.karyawan');
         }
 
         return redirect()->back()->withErrors(['email' => 'Email atau password salah']);

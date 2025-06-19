@@ -6,8 +6,12 @@ use App\Models\AlamatRumah;
 use App\Models\BahanBakar;
 use App\Models\KaryawanPerusahaan;
 use App\Models\PerjalananKaryawanPerusahaan;
+use App\Models\Perusahaan;
 use App\Models\Transportasi;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class PerjalananKaryawanController extends Controller
 {
@@ -52,6 +56,148 @@ class PerjalananKaryawanController extends Controller
         $transportasis = Transportasi::all();
 
         return view('dashboardPerusahaan.layouts.perjalananKaryawanPerusahaan.view', [
+            'dataKaryawan' => $karyawans,
+            'dataBahanBakar' => $bahanbakars,
+            'dataTransportasi' => $transportasis,
+            'data' => $perjalanans,
+            'dataType' => 'perjalanan',
+            'request' => $request
+        ]);
+    }
+
+    public function absen(Request $request)
+    {
+
+        if ($redirect = $this->checkifLoginForEmployee()) return $redirect;
+
+        $validatedData = $request->validate([
+            'alamat_rumah' => 'required',
+            'bahan_bakar' => 'required',
+            'transportasi' => 'required',
+        ]);
+
+        $idPerusahaan = KaryawanPerusahaan::where('id', session('id'))->first()->id_perusahaan;
+
+        $alamatRumah = AlamatRumah::find($request->alamat_rumah);
+        $perusahaan = Perusahaan::find($idPerusahaan);
+
+        if (!$alamatRumah || !$perusahaan) {
+            return response()->json(['error' => 'Data lokasi tidak ditemukan.'], 404);
+        }
+
+        $start = [
+            'lat' => (float) $alamatRumah->latitude,
+            'lng' => (float) $alamatRumah->longitude
+        ];
+
+        $end = [
+            'lat' => (float) $perusahaan->latitude,
+            'lng' => (float) $perusahaan->longitude
+        ];
+
+
+        // $latitudePerusahan = Perusahaan::where('id', $idPerusahaan)->first()->latitude;
+        // $longitudePerusahan = Perusahaan::where('id', $idPerusahaan)->first()->longitude;
+
+        // $latitudeAlamat = AlamatRumah::where('id', $request->alamat)->first()->latitude;
+        // $longitudeAlamat = AlamatRumah::where('id', $request->alamat)->first()->longitude;
+
+        $jarakPerjalanan = $this->hitungJarakPerjalanan($start, $end);
+
+        $emisiKarbon = '';
+
+        PerjalananKaryawanPerusahaan::create([
+            'id_karyawan' => session('id'),
+            'id_transportasi' => $request->transportasi,
+            'id_bahan_bakar' => $request->bahan_bakar,
+            'id_alamat' => $request->alamat,
+            'id_perusahaan' => $idPerusahaan,
+            'tanggal_perjalanan' => Carbon::now(),
+            'jarak_perjalanan' => $jarakPerjalanan,
+            'total_emisi_karbon' => $emisiKarbon,
+        ]);
+
+        return redirect('dashboard/karyawan/perjalanan/absen')->with('success', 'Absen Successfully Taken');
+    }
+
+    public function hitungJarakPerjalanan($start, $end)
+    {
+        $apiKey = env('ORS_API_KEY');
+
+        $coordinates = [
+            [(float) $start['lng'], (float) $start['lat']],
+            [(float) $end['lng'], (float) $end['lat']],
+        ];
+
+        $response = Http::withHeaders([
+            'Authorization' => $apiKey,
+            'Content-Type' => 'application/json',
+        ])->post('https://api.openrouteservice.org/v2/directions/driving-car', [
+            'coordinates' => $coordinates,
+        ]);
+
+        if (!$response->successful()) {
+            Log::error('ORS API gagal:', ['body' => $response->body()]);
+            return null;
+        }
+
+        $data = $response->json();
+
+        // Validasi keberadaan fitur jarak
+        if (
+            isset($data['features'][0]['properties']['segments'][0]['distance'])
+        ) {
+            $distanceInMeters = $data['features'][0]['properties']['segments'][0]['distance'];
+            return round($distanceInMeters / 1000, 2); // dalam KM
+        } else {
+            Log::warning('ORS API respons tidak sesuai:', ['data' => $data]);
+            return null;
+        }
+    }
+
+
+
+    public function indexKaryawan(Request $request)
+    {
+        if ($redirect = $this->checkifLoginForEmployee()) return $redirect;
+
+        $query = PerjalananKaryawanPerusahaan::query();
+
+        // Filter nama_karyawan
+        if ($request->filled('nama_karyawan')) {
+            $query->whereHas('karyawanPerusahaan', function ($q) use ($request) {
+                $q->where('nama_karyawan', 'like', '%' . $request->nama_karyawan . '%');
+            });
+        }
+
+        // Filter nama_bahan_bakar
+        if ($request->filled('nama_bahan_bakar')) {
+            $query->whereHas('bahanBakar', function ($q) use ($request) {
+                $q->where('nama_bahan_bakar', 'like', '%' . $request->nama_bahan_bakar . '%');
+            });
+        }
+
+        // Filter nama_transportasi
+        if ($request->filled('nama_transportasi')) {
+            $query->whereHas('transportasi', function ($q) use ($request) {
+                $q->where('nama_transportasi', 'like', '%' . $request->nama_transportasi . '%');
+            });
+        }
+
+        // Filter tanggal_perjalanan
+        if ($request->filled('tanggal_perjalanan')) {
+            $query->whereDate('tanggal_perjalanan', $request->tanggal_perjalanan);
+        }
+
+        $query->orderBy('tanggal_perjalanan', 'desc');
+
+        $perjalanans = $query->paginate(5);
+
+        $karyawans = KaryawanPerusahaan::all();
+        $bahanbakars = BahanBakar::all();
+        $transportasis = Transportasi::all();
+
+        return view('dashboardKaryawan.layouts.perjalananKaryawanPerusahaan.view', [
             'dataKaryawan' => $karyawans,
             'dataBahanBakar' => $bahanbakars,
             'dataTransportasi' => $transportasis,
@@ -109,7 +255,6 @@ class PerjalananKaryawanController extends Controller
 
         return redirect('dashboard/perusahaan/perjalanan/add')->with('success', 'Data Successfully Added');
     }
-
 
     public function delete($id)
     {
