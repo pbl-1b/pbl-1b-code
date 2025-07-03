@@ -64,6 +64,6 @@ class PerusahaanController extends Controller
             'alamat' => $request->address,
         ]);
 
-        return redirect('dashboard/staff/perusahaan/edit/'.$id.'')->with('success', 'Data Successfully Updated');
+        return redirect('dashboard/staff/perusahaan/edit/' . $id . '')->with('success', 'Data Successfully Updated');
     }
 }

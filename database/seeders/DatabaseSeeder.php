@@ -81,10 +81,14 @@ class DatabaseSeeder extends Seeder
 
         BahanBakar::create([
             'id' => '1',
-            'nama_bahan_bakar' => 'Bahan Bakar 1',
+            'nama_bahan_bakar' => 'Pertalite',
             'harga_bahan_bakar_per_liter' => '10000',
-            'jenis_bahan_bakar' => 'Bahan Bakar 1',
-            'emisi_karbon_permenit' => '100',
+            'jenis_bahan_bakar' => 'Bensin',
+            'co2perliter' => 2.35,
+            'ch4perliter' => 0.00012,
+            'n2Operliter' => 0.0106,
+            'Co2eperliter' => 0.00236,
+            'WTTperliter' => 0.00045,
         ]);
 
         KaryawanPerusahaan::create([
@@ -128,7 +132,6 @@ class DatabaseSeeder extends Seeder
             'judul_informasi' => 'Informasi 1',
             'id_staff_mitra' => '1',
             'isi_informasi' => 'Informasi 1',
-            'tag' => 'Ekonomi, Kesehatan',
             'gambar_informasi' => 'gambar_informasi.jpg',
         ]);
 

@@ -37,7 +37,6 @@ class InformasiController extends Controller
         }
         $validatedData = $request->validate([
             'information_name' => 'required',
-            'tag' => 'required',
             'content' => 'required',
             'gambar_informasi' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
@@ -46,7 +45,7 @@ class InformasiController extends Controller
 
         if ($request->hasFile('gambar_informasi')) {
             $image     = $request->file('gambar_informasi');
-            $imageName = Str::uuid().'.'.$image->getClientOriginalExtension();
+            $imageName = Str::uuid() . '.' . $image->getClientOriginalExtension();
 
             // Simpan langsung ke public/informasi_images
             $image->move(public_path('informasi_images'), $imageName);
@@ -55,10 +54,9 @@ class InformasiController extends Controller
         // Simpan data ke database
         Informasi::create([
             'judul_informasi' => $request->information_name,
-            'tag' => $request->tag,
             'isi_informasi' => $request->content,
             'gambar_informasi' => $imageName,
-            'id_staff_mitra' => 1,
+            'id_staff_mitra' => session('id'),
         ]);
 
         return redirect('dashboard/staff/informasi/add')->with('success', 'Data Successfully Added');
@@ -91,39 +89,37 @@ class InformasiController extends Controller
         if ($redirect = $this->checkifLoginForStaff()) {
             return $redirect;
         }
+
         $validatedData = $request->validate([
             'information_name' => 'required',
-            'tag' => 'required',
             'content' => 'required',
             'gambar_informasi' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $informasi = Informasi::findOrFail($id);
+        $imageName = $informasi->gambar_informasi; // Gunakan gambar lama sebagai default
 
-        // Jika ada file gambar baru yang diupload
         if ($request->hasFile('gambar_informasi')) {
             // Hapus gambar lama jika ada
-            if ($informasi->gambar_informasi && file_exists(public_path('informasi_images/'.$informasi->gambar_informasi))) {
-                unlink(public_path('informasi_images/'.$informasi->gambar_informasi));
+            if ($informasi->gambar_informasi && file_exists(public_path('informasi_images/' . $informasi->gambar_informasi))) {
+                unlink(public_path('informasi_images/' . $informasi->gambar_informasi));
             }
 
             $image     = $request->file('gambar_informasi');
-            $imageName = Str::uuid().'.'.$image->getClientOriginalExtension();
+            $imageName = Str::uuid() . '.' . $image->getClientOriginalExtension();
 
-            // Simpan gambar baru
+            // Simpan gambar baru ke public/informasi_images
             $image->move(public_path('informasi_images'), $imageName);
-
-            $informasi->gambar_informasi = $imageName;
         }
 
-        // Update data lainnya
-        $informasi->judul_informasi = $request->information_name;
-        $informasi->tag             = $request->tag;
-        $informasi->isi_informasi   = $request->content;
+        // Update data ke database
+        $informasi->update([
+            'judul_informasi' => $request->information_name,
+            'isi_informasi' => $request->content,
+            'gambar_informasi' => $imageName,
+        ]);
 
-        $informasi->save();
-
-        return redirect('dashboard/staff/informasi/edit/'.$id)->with('success', 'Data Successfully Updated');
+        return redirect('dashboard/staff/informasi/edit/' . $id)->with('success', 'Data Successfully Updated');
     }
 
     public function restore(string $id)

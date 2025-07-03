@@ -77,7 +77,11 @@ return new class extends Migration
             $table->id();
             $table->string('nama_bahan_bakar');
             $table->string('jenis_bahan_bakar');
-            $table->integer('emisi_karbon_permenit');
+            $table->decimal('co2perliter', 8, 4);
+            $table->decimal('ch4perliter', 8, 4);
+            $table->decimal('n2Operliter', 8, 4);
+            $table->decimal('Co2eperliter', 8, 4);
+            $table->decimal('WTTperliter', 8, 4);
             $table->integer('harga_bahan_bakar_per_liter');
             $table->timestamps();
             $table->softDeletes();
@@ -124,7 +128,6 @@ return new class extends Migration
             $table->string('judul_informasi');
             $table->foreignId('id_staff_mitra')->constrained('staff_mitras');
             $table->text('isi_informasi');
-            $table->string('tag');
             $table->string('gambar_informasi')->nullable();
             $table->timestamps();
             $table->softDeletes();

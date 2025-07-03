@@ -41,18 +41,7 @@ class ServiceController extends Controller
             'service_duration' => 'required',
             'service_price' => 'required',
             'service_description' => 'required',
-            'service_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-
-        $imageName = null;
-
-        if ($request->hasFile('service_image')) {
-            $image     = $request->file('service_image');
-            $imageName = Str::uuid().'.'.$image->getClientOriginalExtension();
-
-            // Simpan langsung ke public/service_images
-            $image->move(public_path('service_images'), $imageName);
-        }
 
         // Simpan data ke database
         Service::create([
@@ -60,8 +49,7 @@ class ServiceController extends Controller
             'durasi_service' => $request->service_duration,
             'harga_service' => $request->service_price,
             'deskripsi_service' => $request->service_description,
-            'image_service' => $imageName,
-            'id_staff_mitra' => 1,
+            'id_staff_mitra' => session('id'),
         ]);
 
         return redirect('dashboard/staff/service/add')->with('success', 'Data Successfully Added');
@@ -96,41 +84,23 @@ class ServiceController extends Controller
         if ($redirect = $this->checkifLoginForStaff()) {
             return $redirect;
         }
+
         $validatedData = $request->validate([
             'service_name' => 'required',
             'service_duration' => 'required',
             'service_price' => 'required',
             'service_description' => 'required',
-            'service_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // nullable karena bisa tidak update gambar
         ]);
 
-        $service = Service::findOrFail($id);
+        // Update data ke database
+        Service::where('id', $id)->update([
+            'nama_service' => $request->service_name,
+            'durasi_service' => $request->service_duration,
+            'harga_service' => $request->service_price,
+            'deskripsi_service' => $request->service_description,
+        ]);
 
-        // Jika ada file gambar baru yang diupload
-        if ($request->hasFile('service_image')) {
-            // Hapus gambar lama jika ada
-            if ($service->image_service && file_exists(public_path('service_images/'.$service->image_service))) {
-                unlink(public_path('service_images/'.$service->image_service));
-            }
-
-            $image     = $request->file('service_image');
-            $imageName = Str::uuid().'.'.$image->getClientOriginalExtension();
-
-            // Simpan gambar baru
-            $image->move(public_path('service_images'), $imageName);
-
-            $service->image_service = $imageName;
-        }
-
-        // Update data lain
-        $service->nama_service      = $request->service_name;
-        $service->durasi_service    = $request->service_duration;
-        $service->harga_service     = $request->service_price;
-        $service->deskripsi_service = $request->service_description;
-
-        $service->save();
-
-        return redirect('dashboard/staff/service/edit/'.$id)->with('success', 'Data Successfully Updated');
+        return redirect('dashboard/staff/service/edit/' . $id)->with('success', 'Data Successfully Updated');
     }
 
     public function restore(string $id)

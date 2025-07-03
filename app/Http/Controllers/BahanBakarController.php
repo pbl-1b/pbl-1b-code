@@ -36,15 +36,30 @@ class BahanBakarController extends Controller
         }
         $validatedData = $request->validate([
             'fuel_name' => 'required',
-            'emission' => 'required',
+            'fuel_type' => 'required',
             'cost' => 'required',
+            'co2perliter' => 'required',
+            'ch4perliter' => 'required',
+            'n2Operliter' => 'required',
+            'WTTperliter' => 'required',
         ]);
+
+        $GWP_CH4 = 25;
+        $GWP_N2O = 298;
+
+        $CO2eperliter = $request->co2perliter
+            + ($request->ch4perliter * $GWP_CH4)
+            + ($request->n2Operliter * $GWP_N2O);
 
         bahanBakar::create([
             'nama_bahan_bakar' => $request->fuel_name,
-            'jenis_bahan_bakar' => '-',
-            'emisi_karbon_permenit' => $request->emission,
+            'jenis_bahan_bakar' => $request->fuel_type,
             'harga_bahan_bakar_per_liter' => $request->cost,
+            'co2perliter' => $request->co2perliter,
+            'ch4perliter' => $request->ch4perliter,
+            'n2Operliter' => $request->n2Operliter,
+            'Co2eperliter' => $CO2eperliter,
+            'WTTperliter' => $request->WTTperliter,
         ]);
 
         return redirect('dashboard/staff/bahanBakar/add')->with('success', 'Data Successfully Added');
@@ -77,20 +92,36 @@ class BahanBakarController extends Controller
         if ($redirect = $this->checkifLoginForStaff()) {
             return $redirect;
         }
+
         $validatedData = $request->validate([
             'fuel_name' => 'required',
-            'emission' => 'required',
+            'fuel_type' => 'required',
             'cost' => 'required',
+            'co2perliter' => 'required',
+            'ch4perliter' => 'required',
+            'n2Operliter' => 'required',
+            'WTTperliter' => 'required',
         ]);
+
+        $GWP_CH4 = 25;
+        $GWP_N2O = 298;
+
+        $CO2eperliter = $request->co2perliter
+            + ($request->ch4perliter * $GWP_CH4)
+            + ($request->n2Operliter * $GWP_N2O);
 
         BahanBakar::where('id', $id)->update([
             'nama_bahan_bakar' => $request->fuel_name,
-            'jenis_bahan_bakar' => '-',
-            'emisi_karbon_permenit' => $request->emission,
+            'jenis_bahan_bakar' => $request->fuel_type,
             'harga_bahan_bakar_per_liter' => $request->cost,
+            'co2perliter' => $request->co2perliter,
+            'ch4perliter' => $request->ch4perliter,
+            'n2Operliter' => $request->n2Operliter,
+            'Co2eperliter' => $CO2eperliter,
+            'WTTperliter' => $request->WTTperliter,
         ]);
 
-        return redirect('dashboard/staff/bahanBakar/edit/'.$id.'')->with('success', 'Data Successfully Updated');
+        return redirect('dashboard/staff/bahanBakar/edit/' . $id . '')->with('success', 'Data Successfully Updated');
     }
 
     public function restore(string $id)

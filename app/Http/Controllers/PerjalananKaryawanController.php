@@ -26,21 +26,21 @@ class PerjalananKaryawanController extends Controller
         // Filter nama_karyawan
         if ($request->filled('nama_karyawan')) {
             $query->whereHas('karyawanPerusahaan', function ($q) use ($request) {
-                $q->where('nama_karyawan', 'like', '%'.$request->nama_karyawan.'%');
+                $q->where('nama_karyawan', 'like', '%' . $request->nama_karyawan . '%');
             });
         }
 
         // Filter nama_bahan_bakar
         if ($request->filled('nama_bahan_bakar')) {
             $query->whereHas('bahanBakar', function ($q) use ($request) {
-                $q->where('nama_bahan_bakar', 'like', '%'.$request->nama_bahan_bakar.'%');
+                $q->where('nama_bahan_bakar', 'like', '%' . $request->nama_bahan_bakar . '%');
             });
         }
 
         // Filter nama_transportasi
         if ($request->filled('nama_transportasi')) {
             $query->whereHas('transportasi', function ($q) use ($request) {
-                $q->where('nama_transportasi', 'like', '%'.$request->nama_transportasi.'%');
+                $q->where('nama_transportasi', 'like', '%' . $request->nama_transportasi . '%');
             });
         }
 
@@ -110,8 +110,6 @@ class PerjalananKaryawanController extends Controller
 
         $jarakPerjalanan = $this->hitungJarakPerjalanan($start, $end);
 
-        dd($jarakPerjalanan);
-
         $emisiKarbon = $jarakPerjalanan * $emisiKarbonPermenit * $request->durasi_perjalanan;
 
         PerjalananKaryawanPerusahaan::create([
@@ -126,45 +124,43 @@ class PerjalananKaryawanController extends Controller
             'total_emisi_karbon' => $emisiKarbon,
         ]);
 
-        return redirect('dashboard/karyawan/perjalanan/absen')->with('success', 'Absen Successfully Taken');
+        return redirect('dashboard/karyawan/')->with('success', 'Absen Successfully Taken');
     }
 
     public function hitungJarakPerjalanan($start, $end)
     {
         $apiKey = env('ORS_API_KEY');
 
+        if (! $apiKey) {
+            Log::error('API key kosong!');
+            return null;
+        }
+
         $coordinates = [
             [(float) $start['lng'], (float) $start['lat']],
             [(float) $end['lng'], (float) $end['lat']],
         ];
 
-        $url = 'https://api.openrouteservice.org/v2/directions/driving-car'; // JANGAN tambahkan query string di sini
-
-        $response = Http::withHeaders([
+        $response = Http::timeout(10)->withHeaders([
             'Authorization' => $apiKey,
             'Content-Type' => 'application/json',
-        ])->withBody(json_encode([
+        ])->post('https://api.openrouteservice.org/v2/directions/driving-car', [
             'coordinates' => $coordinates,
-        ]), 'application/json')->post($url);
+        ]);
 
         if (! $response->successful()) {
-            Log::error('ORS API error:', ['body' => $response->body()]);
-
+            Log::error('ORS API gagal:', [
+                'status' => $response->status(),
+                'body' => $response->body()
+            ]);
             return null;
         }
 
         $data = $response->json();
 
-        if (isset($data['routes'][0]['summary']['distance'])) {
-            $distance = $data['routes'][0]['summary']['distance'];
-
-            return round($distance / 1000, 2); // kilometer
-        }
-
-        Log::warning('ORS API respons tidak sesuai:', ['data' => $data]);
-
-        return null;
+        return round($data['routes'][0]['summary']['distance'] / 1000, 2);
     }
+
 
     public function indexKaryawan(Request $request)
     {
@@ -177,21 +173,21 @@ class PerjalananKaryawanController extends Controller
         // Filter nama_karyawan
         if ($request->filled('nama_karyawan')) {
             $query->whereHas('karyawanPerusahaan', function ($q) use ($request) {
-                $q->where('nama_karyawan', 'like', '%'.$request->nama_karyawan.'%');
+                $q->where('nama_karyawan', 'like', '%' . $request->nama_karyawan . '%');
             });
         }
 
         // Filter nama_bahan_bakar
         if ($request->filled('nama_bahan_bakar')) {
             $query->whereHas('bahanBakar', function ($q) use ($request) {
-                $q->where('nama_bahan_bakar', 'like', '%'.$request->nama_bahan_bakar.'%');
+                $q->where('nama_bahan_bakar', 'like', '%' . $request->nama_bahan_bakar . '%');
             });
         }
 
         // Filter nama_transportasi
         if ($request->filled('nama_transportasi')) {
             $query->whereHas('transportasi', function ($q) use ($request) {
-                $q->where('nama_transportasi', 'like', '%'.$request->nama_transportasi.'%');
+                $q->where('nama_transportasi', 'like', '%' . $request->nama_transportasi . '%');
             });
         }
 
@@ -335,6 +331,6 @@ class PerjalananKaryawanController extends Controller
             'total_emisi_karbon' => $bahanBakar->emisi_karbon_permenit * $request->trip_duration,
         ]);
 
-        return redirect('dashboard/perusahaan/perjalanan/edit/'.$id.'')->with('success', 'Data Successfully Updated');
+        return redirect('dashboard/perusahaan/perjalanan/edit/' . $id . '')->with('success', 'Data Successfully Updated');
     }
 }

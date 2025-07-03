@@ -91,7 +91,7 @@
         >
             <!-- Modal Header -->
             <div class="flex justify-between items-center mb-4 border-b pb-2">
-                <h3 class="text-2xl font-bold text-gray-800">Perjalanan Karyawan Detail</h3>
+                <h3 class="text-2xl font-bold text-gray-800">Consultation Detail</h3>
                 <button @click="showModal = false; confirmDelete = false" class="text-gray-500 hover:text-gray-700 text-xl">
                     &times;
                 </button>

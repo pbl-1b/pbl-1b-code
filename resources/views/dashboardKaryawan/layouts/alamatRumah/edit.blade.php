@@ -1,4 +1,4 @@
-@extends('dashboardPerusahaan.layouts.app')
+@extends('dashboardKaryawan.layouts.app')
 
 @section('title', 'Update Data Employee Address')
 @section('content')

@@ -16,18 +16,20 @@
         selectedRow: {},
     }"
 >
+
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
         <h2 class="text-xl font-semibold text-gray-800">Homes</h2>
         <div class="flex flex-wrap gap-2">
             <!-- Tombol Absen -->
                 <button 
+                    @if($sudahAbsen != null) disabled @endif
                     onclick="openAbsenModal()" 
-                    class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded transition"
+                    class="inline-flex @if($sudahAbsen != null) opacity-50 cursor-not-allowed @endif items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded transition"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M10 2a8 8 0 108 8 8 8 0 00-8-8zM9 11V7h2v4zm0 2h2v2H9z" />
                     </svg>
-                    Absen Sekarang
+                    Take Attedance
                 </button>
 
 
@@ -41,10 +43,73 @@
                 </select> --}}
 
                 <!-- Status Absensi Hari Ini -->
+                @if($sudahAbsen != null)
                 <span class="px-3 py-1.5 bg-blue-100 text-blue-700 text-sm rounded-md font-medium">
-                    Status: Sudah Absen
+                    Status : Attedance Taken
                 </span>
+                @else
+                <span class="px-3 py-1.5 bg-blue-100 text-blue-700 text-sm rounded-md font-medium">
+                    Status : Attedance Has Not Beeen Taken
+                </span>
+                @endif
         </div>
+    </div>
+
+    {{-- Success Message --}}
+        @if (session('success'))
+        <div class="mb-6 p-4 rounded-lg border border-green-400 bg-green-50 text-green-800 flex items-center gap-3 shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span class="font-medium">{{ session('success') }}</span>
+        </div>
+        @endif
+
+    {{-- No Data Message --}}
+    <div x-show="filteredData.length === 0" class="text-center text-gray-500 py-12 text-lg font-medium">
+        No data have been founded
+    </div>
+
+    {{-- Data Table --}}
+    <div x-show="filteredData.length > 0" class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">No</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Employee Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Transportation</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Fuel</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Total Carbon Emissions (CO2e)</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Trip Date</th>
+                    <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <template x-for="(row, index) in filteredData" :key="index">
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" x-text="row.no"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" x-text="row.nama_karyawan"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" x-text="row.transportasi"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" x-text="row.bahan_bakar"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" x-text="row.total_emisi_karbon"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" x-text="row.tanggal_perjalanan"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center">
+                            <button 
+                                @click="selectedRow = row; showModal = true; confirmDelete = false"
+                                class="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-md transition"
+                            >
+                                Detail
+                            </button>
+                        </td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </div>
+
+    {{-- Pagination --}}
+    <div class="mt-6">
+        {{ $data->links('vendor.pagination.custom') }}
     </div>
 
     {{-- <div class="overflow-x-auto">
@@ -189,7 +254,7 @@
                 <label for="transportasi" class="block font-semibold text-gray-800 mb-1">Transportasi</label>
                 <select name="transportasi" id="transportasi" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Pilih Transportasi</option>
-                    @foreach ($transportasis as $transportasi)
+                    @foreach ($dataTransportasi as $transportasi)
                         <option value="{{ $transportasi->id }}">{{ $transportasi->nama_transportasi }}</option>
                     @endforeach
                 </select>
@@ -200,7 +265,7 @@
                 <label for="bahan_bakar" class="block font-semibold text-gray-800 mb-1">Bahan Bakar</label>
                 <select name="bahan_bakar" id="bahan_bakar" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Pilih Bahan Bakar</option>
-                    @foreach ($bahanBakars as $bahanBakar)
+                    @foreach ($dataBahanBakar as $bahanBakar)
                         <option value="{{ $bahanBakar->id }}">{{ $bahanBakar->nama_bahan_bakar}}</option>
                     @endforeach
                 </select>
@@ -211,7 +276,7 @@
                 <label for="alamat_rumah" class="block font-semibold text-gray-800 mb-1">Alamat Rumah</label>
                 <select name="alamat_rumah" id="alamat_rumah" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Pilih Alamat Rumah</option>
-                    @foreach ($alamats as $alamat)
+                    @foreach ($dataAlamat as $alamat)
                         <option value="{{ $alamat->id }}">{{ $alamat->alamat_rumah }}</option>
                     @endforeach
                 </select>
@@ -234,7 +299,6 @@
         </form>
     </div>
 </div>
-
 
 <script>
     function openAbsenModal() {

@@ -87,7 +87,7 @@ class PaymentController extends Controller
 
     public function generateCodeCompany()
     {
-        $codeStr = 'COMP-'.strtoupper(Str::random(6));
+        $codeStr = 'COMP-' . strtoupper(Str::random(6));
 
         // Cek apakah kode sudah pernah dibuat
         $checkDuplicate = Code::where('code', $codeStr)->first();
