@@ -82,6 +82,7 @@ return new class extends Migration
             $table->decimal('n2Operliter', 8, 4);
             $table->decimal('Co2eperliter', 8, 4);
             $table->decimal('WTTperliter', 8, 4);
+            $table->decimal('rerata_konsumsi_literperkm', 8, 4);
             $table->integer('harga_bahan_bakar_per_liter');
             $table->timestamps();
             $table->softDeletes();
@@ -153,9 +154,13 @@ return new class extends Migration
             $table->foreignId('id_perusahaan')->constrained('perusahaans');
             $table->foreignId('id_alamat')->constrained('alamat_rumahs');
             $table->date('tanggal_perjalanan');
-            $table->integer('durasi_perjalanan');
             $table->integer('jarak_perjalanan');
-            $table->integer('total_emisi_karbon');
+            $table->decimal('total_co2', 8, 4);
+            $table->decimal('total_ch4', 8, 4);
+            $table->decimal('total_n2O', 8, 4);
+            $table->decimal('total_co2e', 8, 4);
+            $table->decimal('total_WTT', 8, 4);
+            $table->decimal('total_emisi_karbon', 8, 4);
             $table->timestamps();
             $table->softDeletes();
         });

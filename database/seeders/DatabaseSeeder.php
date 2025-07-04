@@ -89,6 +89,7 @@ class DatabaseSeeder extends Seeder
             'n2Operliter' => 0.0106,
             'Co2eperliter' => 0.00236,
             'WTTperliter' => 0.00045,
+            'rerata_konsumsi_literperkm' => 0.06,
         ]);
 
         KaryawanPerusahaan::create([
@@ -151,7 +152,11 @@ class DatabaseSeeder extends Seeder
             'id_perusahaan' => '1',
             'id_alamat' => '1',
             'tanggal_perjalanan' => '2023-01-01',
-            'durasi_perjalanan' => '30',
+            'total_co2' => '100',
+            'total_ch4' => '100',
+            'total_n2O' => '100',
+            'total_co2e' => '100',
+            'total_WTT' => '100',
             'jarak_perjalanan' => '30',
             'total_emisi_karbon' => '100',
         ]);

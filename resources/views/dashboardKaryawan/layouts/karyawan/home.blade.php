@@ -76,10 +76,9 @@
             <thead class="bg-gray-50">
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">No</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Employee Name</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Transportation</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Fuel</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Total Carbon Emissions (CO2e)</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Total Carbon Emissions (Kg CO2e)</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Trip Date</th>
                     <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
                 </tr>
@@ -88,7 +87,6 @@
                 <template x-for="(row, index) in filteredData" :key="index">
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900" x-text="row.no"></td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" x-text="row.nama_karyawan"></td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" x-text="row.transportasi"></td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" x-text="row.bahan_bakar"></td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700" x-text="row.total_emisi_karbon"></td>
@@ -147,82 +145,145 @@
     {{ $data->links('vendor.pagination.custom') }} --}}
 
     <!-- Modal Detail -->
+    <!-- Modal Detail -->
+<div 
+    x-show="showModal" 
+    x-transition 
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+    style="display: none;"
+>
     <div 
-        x-show="showModal" 
-        x-transition 
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-        style="display: none;"
+        @click.away="showModal = false; confirmDelete = false"
+        x-data="{ confirmDelete: false }"
+        class="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6 relative"
     >
-        <div 
-            @click.away="showModal = false; confirmDelete = false"
-            x-data="{ confirmDelete: false }"
-            class="bg-white w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl p-6 relative"
-        >
-            <!-- Modal Header -->
-            <div class="flex justify-between items-center mb-4 border-b pb-3">
-                <h3 class="text-xl font-bold text-gray-800">Service Detail</h3>
-                <button 
-                    @click="showModal = false; confirmDelete = false" 
-                    class="text-gray-400 hover:text-gray-600 text-2xl font-bold focus:outline-none"
-                >
-                    &times;
-                </button>
+        <!-- Modal Header -->
+        <div class="flex justify-between items-center mb-4 border-b pb-2">
+            <h3 class="text-2xl font-bold text-gray-800">Trip Detail</h3>
+            <button @click="showModal = false; confirmDelete = false" class="text-gray-500 hover:text-gray-700 text-xl">
+                &times;
+            </button>
+        </div>
+
+        <!-- Modal Content -->
+        <div class="bg-white rounded-xl shadow-md p-6 space-y-6 text-sm text-gray-700">
+            <!-- Trip Information -->
+            <div>
+                {{-- <h2 class="text-lg font-semibold text-gray-900 border-b pb-2 mb-4">Trip Information</h2> --}}
+                <div class="grid grid-cols-2 gap-y-3 gap-x-8">
+                    <div>
+                        <p class="text-gray-500">Transportation</p>
+                        <p class="font-medium text-gray-900" x-text="selectedRow.transportasi"></p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Fuel</p>
+                        <p class="font-medium text-gray-900" x-text="selectedRow.bahan_bakar"></p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Address</p>
+                        <p class="font-medium text-gray-900" x-text="selectedRow.alamat"></p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Trip Date</p>
+                        <p class="font-medium text-gray-900" x-text="selectedRow.tanggal_perjalanan"></p>
+                    </div>
+                </div>
             </div>
 
-            <!-- Modal Actions -->
-            <div class="flex justify-between items-center mt-6 pt-4 border-t">
-                <!-- Edit Button -->
-                <a 
-                    :href="'{{ url('/dashboard/perusahaan/karyawan/edit') }}/' + selectedRow.id"
-                    class="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-white text-sm font-semibold rounded-md transition"
-                >
-                    Edit
-                </a>
-
-                <!-- Delete Button Group -->
-                <div class="flex gap-2 items-center">
-                    <!-- Confirm Prompt -->
-                    <template x-if="confirmDelete">
-                        <form 
-                            :action="'{{ url('/dashboard/perusahaan/karyawan') }}/' + selectedRow.id" 
-                            method="POST" 
-                            class="flex items-center gap-2"
-                        >
-                            @csrf
-                            @method('DELETE')
-
-                            <span class="text-sm text-red-500 font-medium">Are you sure?</span>
-
-                            <button 
-                                type="submit"
-                                class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm rounded-md transition"
-                            >
-                                Yes, Delete
-                            </button>
-
-                            <button 
-                                type="button"
-                                @click="confirmDelete = false"
-                                class="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm rounded-md transition"
-                            >
-                                Cancel
-                            </button>
-                        </form>
-                    </template>
-
-                    <!-- Trigger Delete -->
-                    <template x-if="!confirmDelete">
-                        <button 
-                            @click="confirmDelete = true"
-                            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-md transition"
-                        >
-                            Delete
-                        </button>
-                    </template>
+            <!-- Emission Data -->
+            <div>
+                <h2 class="text-lg font-semibold text-gray-900 border-b pb-2 mb-4">Emission Data</h2>
+                <div class="grid grid-cols-2 gap-y-3 gap-x-8">
+                    <div>
+                        <p class="text-gray-500">Total CO<sub>2</sub></p>
+                        <p class="font-medium text-gray-900">
+                            <span x-text="selectedRow.total_co2"></span> kg CO<sub>2</sub>e
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Total CH<sub>4</sub></p>
+                        <p class="font-medium text-gray-900">
+                            <span x-text="selectedRow.total_ch4"></span> kg CO<sub>2</sub>e
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Total N<sub>2</sub>O</p>
+                        <p class="font-medium text-gray-900">
+                            <span x-text="selectedRow.total_n2O"></span> kg CO<sub>2</sub>e
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Total CO<sub>2</sub>e</p>
+                        <p class="font-medium text-gray-900">
+                            <span x-text="selectedRow.total_co2e"></span> kg CO<sub>2</sub>e
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Total WTT</p>
+                        <p class="font-medium text-gray-900">
+                            <span x-text="selectedRow.total_WTT"></span> kg CO<sub>2</sub>e
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-gray-500">Total Carbon Emission</p>
+                        <p class="font-medium text-gray-900">
+                            <span x-text="selectedRow.total_emisi_karbon"></span> kg CO<sub>2</sub>e
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>  
+
+        <!-- Modal Actions -->
+        <div class="flex justify-between items-center mt-6 pt-4 border-t">
+            <!-- Edit Button -->
+            <a 
+                :href="'{{ url('/dashboard/karyawan/perjalanan/edit') }}/' + selectedRow.id"
+                class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold rounded-lg"
+            >
+                Edit
+            </a>
+
+            <!-- Delete Button Group -->
+            {{-- <div class="flex gap-2 items-center">
+                <!-- Confirm Prompt -->
+                <template x-if="confirmDelete">
+                    <form :action="'{{ url('/dashboard/karyawan/perjalanan') }}/' + selectedRow.id" method="POST" class="flex items-center gap-2">
+                        @csrf
+                        @method('DELETE')
+
+                        <span class="text-sm text-red-500">Are you sure?</span>
+
+                        <button 
+                            type="submit"
+                            class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-md"
+                        >
+                            Yes, Delete
+                        </button>
+
+                        <button 
+                            type="button"
+                            @click="confirmDelete = false"
+                            class="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold rounded-md"
+                        >
+                            Cancel
+                        </button>
+                    </form>
+                </template>
+
+                <!-- Trigger Delete -->
+                <template x-if="!confirmDelete">
+                    <button 
+                        @click="confirmDelete = true"
+                        class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg"
+                    >
+                        Delete
+                    </button>
+                </template>
+            </div> --}}
+        </div>
+    </div>
+</div> 
 
 </div>
 
@@ -236,7 +297,7 @@
     >
         <!-- Modal Header -->
         <div class="flex justify-between items-center mb-4 border-b pb-3">
-            <h3 class="text-xl font-bold text-gray-800">Form Absensi</h3>
+            <h3 class="text-xl font-bold text-gray-800">Attendance Form</h3>
             <button 
                 onclick="closeAbsenModal()" 
                 class="text-gray-400 hover:text-gray-600 text-2xl font-bold focus:outline-none"
@@ -251,9 +312,9 @@
 
             <!-- Select Transportasi -->
             <div>
-                <label for="transportasi" class="block font-semibold text-gray-800 mb-1">Transportasi</label>
+                <label for="transportasi" class="block font-semibold text-gray-800 mb-1">Transportation</label>
                 <select name="transportasi" id="transportasi" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">Pilih Transportasi</option>
+                    <option value="">Select Transportation</option>
                     @foreach ($dataTransportasi as $transportasi)
                         <option value="{{ $transportasi->id }}">{{ $transportasi->nama_transportasi }}</option>
                     @endforeach
@@ -262,9 +323,9 @@
 
             <!-- Select Bahan Bakar -->
             <div>
-                <label for="bahan_bakar" class="block font-semibold text-gray-800 mb-1">Bahan Bakar</label>
+                <label for="bahan_bakar" class="block font-semibold text-gray-800 mb-1">Fuel</label>
                 <select name="bahan_bakar" id="bahan_bakar" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">Pilih Bahan Bakar</option>
+                    <option value="">Select Fuel</option>
                     @foreach ($dataBahanBakar as $bahanBakar)
                         <option value="{{ $bahanBakar->id }}">{{ $bahanBakar->nama_bahan_bakar}}</option>
                     @endforeach
@@ -273,18 +334,13 @@
 
             <!-- Select Alamat Rumah -->
             <div>
-                <label for="alamat_rumah" class="block font-semibold text-gray-800 mb-1">Alamat Rumah</label>
+                <label for="alamat_rumah" class="block font-semibold text-gray-800 mb-1">Address</label>
                 <select name="alamat_rumah" id="alamat_rumah" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">Pilih Alamat Rumah</option>
+                    <option value="">Select Address</option>
                     @foreach ($dataAlamat as $alamat)
                         <option value="{{ $alamat->id }}">{{ $alamat->alamat_rumah }}</option>
                     @endforeach
                 </select>
-            </div>
-
-            <div>
-                <label for="durasi_perjalanan" class="block font-semibold text-gray-800 mb-1">Alamat Rumah</label>
-                <input type="number" required placeholder="Durasi Perjalanan (dalam menit)" name="durasi_perjalanan" id="durasi_perjalanan" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
             </div>
 
             <!-- Submit Button -->
@@ -293,7 +349,7 @@
                     type="submit"
                     class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-md transition"
                 >
-                    Simpan Absen
+                    Take Attendance
                 </button>
             </div>
         </form>

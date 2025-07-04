@@ -136,6 +136,7 @@
                 n2Operliter: '{{ $item->n2Operliter }}',
                 co2eperliter: '{{ $item->Co2eperliter }}',
                 WTTperliter: '{{ $item->WTTperliter }}',
+                rerata_konsumsi_literperkm: '{{ $item->rerata_konsumsi_literperkm }} l/km',
                 harga_bahan_bakar: 'Rp. {{ $item->harga_bahan_bakar_per_liter }}',
                 created_at: '{{ $item->created_at }}',
                 updated_at: '{{ $item->updated_at }}',

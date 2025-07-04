@@ -150,6 +150,19 @@
                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
             @enderror
         </div>
+
+        <!-- WTT per-Liter -->
+        <div>
+            <label for="rerata_konsumsi_literperkm" class="block text-sm font-medium text-gray-700 mb-1">
+                Consumption Rate (l/km) <span class="text-red-500">*</span>
+            </label>
+            <input type="text" id="rerata_konsumsi_literperkm" name="rerata_konsumsi_literperkm" value="{{ $oldData->rerata_konsumsi_literperkm ?? '' }}" required
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                placeholder="0.03 (kg CO2e/L WTT)" />
+            @error('rerata_konsumsi_literperkm')
+                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+            @enderror
+        </div>
     </div>
 
     <!-- Notifikasi Sukses -->

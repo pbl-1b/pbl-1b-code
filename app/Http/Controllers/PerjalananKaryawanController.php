@@ -78,7 +78,7 @@ class PerjalananKaryawanController extends Controller
             'alamat_rumah' => 'required',
             'bahan_bakar' => 'required',
             'transportasi' => 'required',
-            'durasi_perjalanan' => 'required',
+            // 'durasi_perjalanan' => 'required',
         ]);
 
         $idPerusahaan = KaryawanPerusahaan::where('id', session('id'))->first()->id_perusahaan;
@@ -116,7 +116,7 @@ class PerjalananKaryawanController extends Controller
             'id_karyawan' => session('id'),
             'id_transportasi' => $request->transportasi,
             'id_bahan_bakar' => $request->bahan_bakar,
-            'durasi_perjalanan' => $request->durasi_perjalanan,
+            // 'durasi_perjalanan' => $request->durasi_perjalanan,
             'id_alamat' => $request->alamat_rumah,
             'id_perusahaan' => $idPerusahaan,
             'tanggal_perjalanan' => Carbon::now(),

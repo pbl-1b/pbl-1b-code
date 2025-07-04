@@ -110,7 +110,11 @@
                 bahan_bakar: '{{ $item->bahanBakar->nama_bahan_bakar }}',
                 alamat: '{{ $item->alamat->alamat_rumah }}',
                 tanggal_perjalanan: '{{ $item->tanggal_perjalanan }}',
-                durasi_perjalanan: '{{ $item->durasi_perjalanan }}',
+                total_co2: '{{ $item->total_co2 }}',
+                total_co2e: '{{ $item->total_co2e }}',
+                total_ch4: '{{ $item->total_ch4 }}',
+                total_n2O: '{{ $item->total_n2O }}',
+                total_WTT: '{{ $item->total_WTT }}',
                 total_emisi_karbon: '{{ $item->total_emisi_karbon }}',
             }@if (!$loop->last),@endif
             @endforeach
@@ -124,6 +128,8 @@
                 id: '{{ $item->id }}',
                 nama_karyawan: '{{ $item->karyawanPerusahaan->nama_karyawan }}',
                 alamat: '{{ $item->alamat_rumah }}',
+                longitude: '{{ $item->longitude }}',
+                latitude: '{{ $item->latitude }}',
             }@if (!$loop->last),@endif
             @endforeach
         ],

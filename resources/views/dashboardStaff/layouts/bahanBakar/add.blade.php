@@ -91,7 +91,8 @@
             ['id' => 'co2perliter', 'label' => 'CO2 per-Liter', 'placeholder' => '0.5 (kg CO2e/L)'],
             ['id' => 'ch4perliter', 'label' => 'CH4 per-Liter', 'placeholder' => '0.02 (kg CH4e/L)'],
             ['id' => 'n2Operliter', 'label' => 'N2O per-Liter', 'placeholder' => '0.01 (kg N2Oe/L)'],
-            ['id' => 'WTTperliter', 'label' => 'WTT per-Liter', 'placeholder' => '0.03 (kg CO2e/L WTT)']
+            ['id' => 'WTTperliter', 'label' => 'WTT per-Liter', 'placeholder' => '0.03 (kg CO2e/L WTT)'],
+            ['id' => 'rerata_konsumsi_literperkm', 'label' => 'Comsumption Rate', 'placeholder' => '0.03 (l/km)'],
         ] as $field)
         <div>
             <label for="{{ $field['id'] }}" class="block text-sm font-medium text-gray-700 mb-1">

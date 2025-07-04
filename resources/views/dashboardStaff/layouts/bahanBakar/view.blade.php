@@ -104,6 +104,10 @@
                             <p class="text-gray-500">Cost per Liter</p>
                             <p class="font-medium text-gray-900" x-text="selectedRow.nama_bahan_bakar"></p>
                         </div>
+                        <div>
+                            <p class="text-gray-500">Consumption Rate</p>
+                            <p class="font-medium text-gray-900" x-text="selectedRow.rerata_konsumsi_literperkm"></p>
+                        </div>
                     </div>
                 </div>
 

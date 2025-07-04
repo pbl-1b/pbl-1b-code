@@ -42,6 +42,7 @@ class BahanBakarController extends Controller
             'ch4perliter' => 'required',
             'n2Operliter' => 'required',
             'WTTperliter' => 'required',
+            'rerata_konsumsi_literperkm' => 'required',
         ]);
 
         $GWP_CH4 = 25;
@@ -60,6 +61,7 @@ class BahanBakarController extends Controller
             'n2Operliter' => $request->n2Operliter,
             'Co2eperliter' => $CO2eperliter,
             'WTTperliter' => $request->WTTperliter,
+            'rerata_konsumsi_literperkm' => $request->rerata_konsumsi_literperkm,
         ]);
 
         return redirect('dashboard/staff/bahanBakar/add')->with('success', 'Data Successfully Added');
@@ -101,6 +103,7 @@ class BahanBakarController extends Controller
             'ch4perliter' => 'required',
             'n2Operliter' => 'required',
             'WTTperliter' => 'required',
+            'rerata_konsumsi_literperkm' => 'required',
         ]);
 
         $GWP_CH4 = 25;
@@ -119,6 +122,7 @@ class BahanBakarController extends Controller
             'n2Operliter' => $request->n2Operliter,
             'Co2eperliter' => $CO2eperliter,
             'WTTperliter' => $request->WTTperliter,
+            'rerata_konsumsi_literperkm' => $request->rerata_konsumsi_literperkm,
         ]);
 
         return redirect('dashboard/staff/bahanBakar/edit/' . $id . '')->with('success', 'Data Successfully Updated');

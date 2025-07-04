@@ -107,12 +107,21 @@ class AlamatRumahController extends Controller
         return redirect('dashboard/perusahaan/alamat')->with('success', 'Data Successfully Deleted');
     }
 
+    public function deleteAlamatKaryawan($id)
+    {
+        if ($redirect = $this->checkifLoginForEmployee()) {
+            return $redirect;
+        }
+        AlamatRumah::destroy($id);
+
+        return redirect('dashboard/karyawan/alamat')->with('success', 'Data Successfully Deleted');
+    }
+
     public function edit($id)
     {
         if ($redirect = $this->checkifLoginForCompany()) {
             return $redirect;
         }
-        Controller::checkifLoginForCompany();
         $karyawans = KaryawanPerusahaan::all();
 
         $oldData = AlamatRumah::find($id);
@@ -120,6 +129,24 @@ class AlamatRumahController extends Controller
         // return ($oldData);
 
         return view('dashboardPerusahaan.layouts.alamatRumah.edit', ['dataKaryawan' => $karyawans, 'oldData' => $oldData, 'id' => $id]);
+    }
+
+    public function editAlamatKaryawan($id)
+    {
+        if ($redirect = $this->checkifLoginForEmployee()) {
+            return $redirect;
+        }
+
+        // Ambil data alamat berdasarkan ID dan pastikan milik karyawan yang sedang login
+        $alamatRumah = AlamatRumah::where('id', $id)
+            ->where('id_karyawan', session('id'))
+            ->first();
+
+        if (!$alamatRumah) {
+            return redirect('/dashboard/karyawan/alamat')->with('error', 'Address data not found');
+        }
+
+        return view('dashboardKaryawan.layouts.alamatRumah.edit', compact('alamatRumah'));
     }
 
     public function update(Request $request, string $id)
@@ -139,6 +166,41 @@ class AlamatRumahController extends Controller
         ]);
 
         return redirect('dashboard/perusahaan/alamat/edit/' . $id . '')->with('success', 'Data Successfully Updated');
+    }
+
+    public function updateAlamatKaryawan(Request $request, $id)
+    {
+        if ($redirect = $this->checkifLoginForEmployee()) {
+            return $redirect;
+        }
+
+        // Validasi input
+        $request->validate([
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+        ]);
+
+        // Ambil data alamat berdasarkan ID dan pastikan milik karyawan yang sedang login
+        $alamatRumah = AlamatRumah::where('id', $id)
+            ->where('id_karyawan', session('id'))
+            ->first();
+
+        if (!$alamatRumah) {
+            return redirect('/dashboard/karyawan/alamat')->with('error', 'Address data not found');
+        }
+
+        // Dapatkan detail alamat dari koordinat yang baru
+        $alamatRumahBaru = $this->getLocationDetails($request->latitude, $request->longitude);
+
+        // Update data alamat
+        $alamatRumah->update([
+            'alamat_rumah' => $alamatRumahBaru,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'updated_at' => now(),
+        ]);
+
+        return redirect('/dashboard/karyawan/alamat')->with('success', 'Address data updated successfully');
     }
 
     public function restore(string $id)
